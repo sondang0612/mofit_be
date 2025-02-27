@@ -1,0 +1,13 @@
+name: 'mofit-backend-dev'
+
+services:
+  hrforte-postgres-dev:
+    container_name: mofit-postgres-dev
+    image: postgres
+    shm_size: 128mb
+    environment:
+      POSTGRES_PASSWORD: Admin@123
+      POSTGRES_USER: postgres
+      POSTGRES_DB: mofit-postgres-dev
+    ports:
+      - '5432:5432'
