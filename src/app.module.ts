@@ -1,15 +1,21 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ProductsModule } from './modules/products/products.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Product } from './database/entities/product.entity';
-import { CategoriesModule } from './modules/categories/categories.module';
-import { Category } from './database/entities/category.entity';
-import { MockDataModule } from './modules/mock-data/mock-data.module';
-import { AttributesModule } from './modules/attributes/attributes.module';
 import { Attribute } from './database/entities/attribute.entity';
-import { UsersModule } from './modules/users/users.module';
+import { Category } from './database/entities/category.entity';
+import { Product } from './database/entities/product.entity';
+import { User } from './database/entities/user.entity';
+import { AttributesModule } from './modules/attributes/attributes.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { CartItemsModule } from './modules/cart-items/cart-items.module';
+import { CartModule } from './modules/cart/cart.module';
+import { CategoriesModule } from './modules/categories/categories.module';
+import { MockDataModule } from './modules/mock-data/mock-data.module';
+import { ProductsModule } from './modules/products/products.module';
+import { UsersModule } from './modules/users/users.module';
+import { Cart } from './database/entities/cart.entity';
+import { CartItem } from './database/entities/cart-item.entity';
+import { JwtStrategy } from './modules/auth/strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -21,7 +27,7 @@ import { AuthModule } from './modules/auth/auth.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Product, Category, Attribute],
+      entities: [Product, Category, Attribute, User, Cart, CartItem],
       synchronize: true,
     }),
     ProductsModule,
@@ -30,6 +36,9 @@ import { AuthModule } from './modules/auth/auth.module';
     AttributesModule,
     UsersModule,
     AuthModule,
+    CartModule,
+    CartItemsModule,
   ],
+  providers: [JwtStrategy],
 })
 export class AppModule {}

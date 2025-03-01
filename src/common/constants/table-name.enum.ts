@@ -2,5 +2,7 @@ export enum ETableName {
   PRODUCT = 'products',
   CATEGORY = 'categories',
   ATTIRBUTE = 'attributes',
-  USERS = 'users',
+  USER = 'users',
+  CART = 'carts',
+  CART_ITEM = 'cart_items',
 }

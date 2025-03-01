@@ -1,21 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { CreateAttributeDto } from './dto/create-attribute.dto';
-import { UpdateAttributeDto } from './dto/update-attribute.dto';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { Attribute } from 'src/database/entities/attribute.entity';
-import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
+import { AttributesRepository } from './attributes.repository';
+import { CreateAttributeDto } from './dto/create-attribute.dto';
 
 @Injectable()
-export class AttributesService extends TypeOrmBaseService<Attribute> {
+export class AttributesService {
   constructor(
     @InjectRepository(Attribute)
-    private readonly attributeServices: Repository<Attribute>,
-  ) {
-    super(attributeServices);
-  }
+    private readonly attributesRepository: AttributesRepository,
+  ) {}
   create(createAttributeDto: CreateAttributeDto) {
-    return this.createOne(createAttributeDto);
+    return this.attributesRepository._create(createAttributeDto);
   }
 
   findAll() {
@@ -24,13 +20,5 @@ export class AttributesService extends TypeOrmBaseService<Attribute> {
 
   findOne(id: number) {
     return `This action returns a #${id} attribute`;
-  }
-
-  update(id: number, updateAttributeDto: UpdateAttributeDto) {
-    return `This action updates a #${id} attribute`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} attribute`;
   }
 }

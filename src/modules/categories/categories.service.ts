@@ -1,25 +1,18 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
-import { Category } from 'src/database/entities/category.entity';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { ProductsService } from '../products/products.service';
-import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
+import { Category } from 'src/database/entities/category.entity';
+import { CategoriesRepository } from './categories.repository';
+import { CreateCategoryDto } from './dto/create-category.dto';
 
 @Injectable()
-export class CategoriesService extends TypeOrmBaseService<Category> {
+export class CategoriesService {
   constructor(
     @InjectRepository(Category)
-    private readonly categoryServices: Repository<Category>,
-    @Inject(forwardRef(() => ProductsService))
-    private productServices: ProductsService,
-  ) {
-    super(categoryServices);
-  }
+    private readonly categoriesRepository: CategoriesRepository,
+  ) {}
 
   create(createCategoryDto: CreateCategoryDto) {
-    return this.createOne(createCategoryDto);
+    return this.categoriesRepository._create(createCategoryDto);
   }
 
   findAll() {
@@ -28,13 +21,5 @@ export class CategoriesService extends TypeOrmBaseService<Category> {
 
   findOne(id: number) {
     return `This action returns a #${id} category`;
-  }
-
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} category`;
   }
 }

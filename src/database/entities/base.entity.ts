@@ -2,11 +2,10 @@
 import { Exclude } from 'class-transformer';
 import { EDefaultEmail } from 'src/common/constants/default-email.enum';
 import {
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
   Column,
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 export abstract class BaseEntity {

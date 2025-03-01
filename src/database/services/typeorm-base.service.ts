@@ -1,6 +1,9 @@
+import { NotFoundException } from '@nestjs/common';
+import { instanceToInstance } from 'class-transformer';
+import { EDefaultEmail } from 'src/common/constants/default-email.enum';
+import { SortOrder } from 'src/common/dtos/pagination.dto';
 import {
   DeepPartial,
-  EntityMetadata,
   FindOneOptions,
   FindOptionsWhere,
   In,
@@ -9,10 +12,6 @@ import {
   SelectQueryBuilder,
 } from 'typeorm';
 import { BaseEntity } from '../entities/base.entity';
-import { EDefaultEmail } from 'src/common/constants/default-email.enum';
-import { NotFoundException } from '@nestjs/common';
-import { instanceToInstance } from 'class-transformer';
-import { SortOrder } from 'src/common/dtos/pagination.dto';
 
 type CreateEntityOpts = Partial<{
   userEmail?: string;

@@ -1,30 +1,22 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Product } from 'src/database/entities/product.entity';
-import { Repository } from 'typeorm';
-import { CategoriesService } from '../categories/categories.service';
+import { Injectable } from '@nestjs/common';
+import { CategoriesRepository } from '../categories/categories.repository';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductPaginationDto } from './dto/product-pagination.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
-import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
+import { ProductsRepository } from './products.repository';
 
 @Injectable()
-export class ProductsService extends TypeOrmBaseService<Product> {
+export class ProductsService {
   constructor(
-    @InjectRepository(Product)
-    private readonly productRepository: Repository<Product>,
-    @Inject(forwardRef(() => CategoriesService))
-    private categoryService: CategoriesService,
-  ) {
-    super(productRepository);
-  }
+    private readonly productRepository: ProductsRepository,
+    private readonly categoriesRepository: CategoriesRepository,
+  ) {}
 
   async create(createProductDto: CreateProductDto) {
-    const categories = await this.categoryService.findByIdsOrFail(
+    const categories = await this.categoriesRepository._findByIdsOrFail(
       createProductDto.categoryIds,
     );
 
-    const product = await this.createOne({
+    const product = await this.productRepository._create({
       ...createProductDto,
       categories,
     });
@@ -38,10 +30,16 @@ export class ProductsService extends TypeOrmBaseService<Product> {
   async findAll(paginationDto: ProductPaginationDto) {
     const { attributeName, limit, page, sortBy, sort } = paginationDto;
 
-    let queryBuilder = this.repository
-      .createQueryBuilder(this.entityName)
-      .leftJoinAndSelect(`${this.entityName}.attributes`, 'attributes')
-      .leftJoinAndSelect(`${this.entityName}.category`, 'category');
+    const queryBuilder = this.productRepository
+      .createQueryBuilder(this.productRepository.entityName)
+      .leftJoinAndSelect(
+        `${this.productRepository.entityName}.attributes`,
+        'attributes',
+      )
+      .leftJoinAndSelect(
+        `${this.productRepository.entityName}.category`,
+        'category',
+      );
 
     if (attributeName) {
       queryBuilder.andWhere('attributes.name ILIKE :attributeName', {
@@ -49,7 +47,7 @@ export class ProductsService extends TypeOrmBaseService<Product> {
       });
     }
 
-    const data = await this.getAll(queryBuilder, {
+    const data = await this.productRepository._findAll(queryBuilder, {
       limit,
       page,
       sort: {
@@ -66,13 +64,5 @@ export class ProductsService extends TypeOrmBaseService<Product> {
 
   findOne(id: number) {
     return `This action returns a #${id} product`;
-  }
-
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} product`;
   }
 }

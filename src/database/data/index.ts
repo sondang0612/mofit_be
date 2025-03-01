@@ -4,6 +4,17 @@ export const categoriesData = [
   },
 ];
 
+export const usersData = [
+  {
+    username: 'dhson0612',
+    email: 'dhson0612@gmail.com',
+    phoneNumber: '0354335099',
+    password: '123456',
+    firstName: 'Son',
+    lastName: 'Dang',
+  },
+];
+
 export const attributesData = [
   {
     name: 'New Arrivals',
@@ -24,7 +35,7 @@ export const productsData = [
     title: 'Cropped Faux Leather Jacket',
     price: 29,
     imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
+      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
     imgSrc2:
       'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
     totalReviews: '8k+ reviews',
@@ -37,7 +48,7 @@ export const productsData = [
     title: 'Calvin Shorts',
     price: 62,
     imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
+      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
     imgSrc2:
       'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
     ratings: 4.5,
@@ -47,10 +58,10 @@ export const productsData = [
     id: 235,
     categoryName: 'Dresses',
     attributeNames: ['Best Seller'],
-    title: 'Kirby T-Shirt',
+    title: 'Giordonal',
     price: 17,
     imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
+      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
     imgSrc2:
       'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
     ratings: 3,
@@ -60,10 +71,10 @@ export const productsData = [
     id: 241,
     categoryName: 'Dresses',
     attributeNames: ['Best Seller'],
-    title: 'Cropped Faux Leather Jacket',
+    title: 'Fancies',
     price: 29,
     imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
+      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
     imgSrc2:
       'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
     totalReviews: '8k+ reviews',
@@ -73,13 +84,13 @@ export const productsData = [
     id: 242,
     categoryName: 'Dresses',
     attributeNames: ['Top Rated'],
-    title: 'Calvin Shorts',
+    title: 'Jogarbola',
     price: 62,
     imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
+      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
     imgSrc2:
       'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
-    totalReviews: '',
+    totalReviews: '2k4+ reviews',
     ratings: 3,
   },
   {
@@ -89,7 +100,7 @@ export const productsData = [
     title: 'Kirby T-Shirt',
     price: 17,
     imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
+      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
     imgSrc2:
       'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
     totalReviews: '10k+ reviews',
@@ -102,7 +113,7 @@ export const productsData = [
     title: 'Cableknit Shawl',
     price: 99,
     imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
+      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
     imgSrc2:
       'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
     totalReviews: '10k+ reviews',
@@ -115,7 +126,7 @@ export const productsData = [
     title: 'Colorful Jacket',
     price: 29,
     imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
+      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
     imgSrc2:
       'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
     totalReviews: '5k1+ reviews',
