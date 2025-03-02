@@ -1,25 +1,42 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/database/entities/user.entity';
+import { CartItemsRepository } from '../cart-items/cart-items.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
     private readonly userRepository: UsersRepository,
+    private readonly cartItemsRepository: CartItemsRepository,
   ) {}
 
   create(createUserDto: CreateUserDto) {
     return this.userRepository._create(createUserDto);
   }
 
-  findAll() {
-    return `This action returns all users`;
-  }
+  async addToCart(args: {
+    userId: number;
+    userEmail: string;
+    productId: number;
+    quantity: number;
+  }) {
+    const { userId, productId, quantity, userEmail } = args;
+    const cartItem = await this.cartItemsRepository._findOne({
+      where: { user: { id: userId }, product: { id: productId } },
+    });
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+    if (cartItem) {
+      cartItem.quantity += quantity;
+      await this.cartItemsRepository.save(cartItem);
+    } else {
+      await this.cartItemsRepository._create(
+        { product: { id: productId }, user: { id: userId }, quantity },
+        { userEmail },
+      );
+    }
+
+    return {
+      message: 'Add to cart successfully',
+    };
   }
 }

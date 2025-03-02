@@ -1,8 +1,11 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
+import { EApiPathName } from 'src/common/constants/api-path.enum';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { AddToCartDto } from './dto/add-to-cart.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 
-@Controller('users')
+@Controller({ path: EApiPathName.USERS })
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -11,13 +14,13 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @Post('add-to-cart')
+  @UseGuards(JwtAuthGuard)
+  addToCart(@Request() req, @Body() addToCartDto: AddToCartDto) {
+    return this.usersService.addToCart({
+      ...addToCartDto,
+      userId: req?.user?.id,
+      userEmail: req?.user?.email,
+    });
   }
 }

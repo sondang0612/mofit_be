@@ -82,9 +82,52 @@ export class AuthService {
       where: { id, email },
     });
 
-    if (!user) {
-      throw new BadRequestException('User not found');
+    return {
+      data: instanceToInstance(user),
+      message: 'Get profile successfully',
+    };
+  }
+
+  async updateProfile(args: {
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    currentPassword: string;
+    newPassword: string;
+    userId: number;
+    userEmail: string;
+  }) {
+    const {
+      firstName,
+      lastName,
+      phoneNumber,
+      currentPassword,
+      newPassword,
+      userId,
+      userEmail,
+    } = args;
+
+    const user = await this.userRepository._findOneOrFail({
+      where: { id: userId, email: userEmail },
+    });
+    if (currentPassword) {
+      const isPasswordValid = await comparePassword(
+        currentPassword,
+        user.password,
+      );
+
+      if (!isPasswordValid) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+
+      user.password = await hashPassword(newPassword);
     }
+
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.phoneNumber = phoneNumber;
+
+    await this.userRepository.save(user);
 
     return {
       data: instanceToInstance(user),

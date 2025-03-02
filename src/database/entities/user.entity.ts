@@ -1,8 +1,8 @@
+import { Exclude } from 'class-transformer';
 import { ETableName } from 'src/common/constants/table-name.enum';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { BaseEntity } from './base.entity';
-import { Exclude } from 'class-transformer';
-import { Cart } from './cart.entity';
+import { CartItem } from './cart-item.entity';
 
 @Entity(ETableName.USER)
 export class User extends BaseEntity {
@@ -25,6 +25,6 @@ export class User extends BaseEntity {
   @Column()
   lastName: string;
 
-  @OneToMany(() => Cart, (cart) => cart.user)
-  carts: Cart[];
+  @OneToMany(() => CartItem, (cartItem) => cartItem.user)
+  cartItems: CartItem[];
 }
