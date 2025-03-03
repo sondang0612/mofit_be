@@ -15,6 +15,8 @@ import { MockDataModule } from './modules/mock-data/mock-data.module';
 import { ProductsModule } from './modules/products/products.module';
 import { UsersModule } from './modules/users/users.module';
 import { CartModule } from './modules/cart/cart.module';
+import { AddressesModule } from './modules/addresses/addresses.module';
+import { Address } from './database/entities/address.entity';
 
 @Module({
   imports: [
@@ -26,7 +28,7 @@ import { CartModule } from './modules/cart/cart.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Product, Category, Attribute, User, CartItem],
+      entities: [Product, Category, Attribute, User, CartItem, Address],
       synchronize: true,
     }),
     ProductsModule,
@@ -37,6 +39,7 @@ import { CartModule } from './modules/cart/cart.module';
     AuthModule,
     CartItemsModule,
     CartModule,
+    AddressesModule,
   ],
   providers: [JwtStrategy],
 })

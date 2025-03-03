@@ -3,6 +3,7 @@ import { ETableName } from 'src/common/constants/table-name.enum';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { CartItem } from './cart-item.entity';
+import { Address } from './address.entity';
 
 @Entity(ETableName.USER)
 export class User extends BaseEntity {
@@ -27,4 +28,7 @@ export class User extends BaseEntity {
 
   @OneToMany(() => CartItem, (cartItem) => cartItem.user)
   cartItems: CartItem[];
+
+  @OneToMany(() => Address, (address) => address.user)
+  addresses: Address[];
 }
