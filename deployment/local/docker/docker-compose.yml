@@ -1,7 +1,7 @@
 name: 'mofit-backend-dev'
 
 services:
-  hrforte-postgres-dev:
+  mofit-postgres-dev:
     container_name: mofit-postgres-dev
     image: postgres
     shm_size: 128mb
