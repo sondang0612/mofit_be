@@ -1,11 +1,10 @@
 import { ETableName } from 'src/common/constants/table-name.enum';
-import { Column, Entity, ManyToOne, Unique } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Product } from './product.entity';
 import { User } from './user.entity';
 
 @Entity(ETableName.CART_ITEM)
-@Unique(['user', 'product'])
 export class CartItem extends BaseEntity {
   @ManyToOne(() => User, (user) => user.cartItems)
   user: User;

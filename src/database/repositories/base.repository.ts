@@ -82,12 +82,12 @@ export abstract class BaseRepository<
     });
 
     if (sort && sort.field) {
-      queryBuilder.orderBy(
+      queryBuilder.addOrderBy(
         `${this.entityName}.${sort.field}`,
         sort.order as any,
       );
     } else {
-      queryBuilder.orderBy(`${this.entityName}.createdAt`, 'DESC');
+      queryBuilder.addOrderBy(`${this.entityName}.createdAt`, 'DESC');
     }
 
     queryBuilder.take(limit);

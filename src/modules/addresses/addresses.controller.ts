@@ -1,7 +1,12 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
   Post,
   Query,
   Request,
@@ -17,7 +22,7 @@ import { CreateAddressDto } from './dto/create-address.dto';
 export class AddressesController {
   constructor(private readonly addressesService: AddressesService) {}
 
-  @Post()
+  @Post('/me')
   @UseGuards(JwtAuthGuard)
   create(@Request() req, @Body() createAddressDto: CreateAddressDto) {
     return this.addressesService.create({
@@ -35,6 +40,28 @@ export class AddressesController {
   ) {
     return this.addressesService.findAll({
       ...addressPaginationDto,
+      limit: 50,
+      userId: req?.user?.id,
+    });
+  }
+
+  @Delete('/:addressId/me')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deleteMyAddress(@Request() req, @Param('addressId') addressId: number) {
+    return this.addressesService.deleteMyAddress(
+      addressId,
+      req?.user?.id,
+      req?.user?.userEmail,
+    );
+  }
+
+  @Patch('/:addressId/me/default')
+  @UseGuards(JwtAuthGuard)
+  setDefaultAddress(@Request() req, @Param('addressId') addressId: number) {
+    return this.addressesService.setDefaultAddress({
+      addressId,
+      userEmail: req?.user?.email,
       userId: req?.user?.id,
     });
   }

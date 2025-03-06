@@ -5,5 +5,5 @@ export enum ETableName {
   USER = 'users',
   CART = 'carts',
   CART_ITEM = 'cart_items',
-  ADDRESS = 'adddresses',
+  ADDRESS = 'addresses',
 }

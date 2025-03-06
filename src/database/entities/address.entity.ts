@@ -26,6 +26,9 @@ export class Address extends BaseEntity {
   @Column({ default: false })
   isDefault: boolean;
 
+  @Column({ nullable: true })
+  phoneNumber: string;
+
   @ManyToOne(() => User, (user) => user.addresses)
   user: User;
 }

@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { AddressesRepository } from './addresses.repository';
 import { AddressPaginationDto } from './dto/address-pagination.dto';
+import { Address } from 'src/database/entities/address.entity';
 
 @Injectable()
 export class AddressesService {
@@ -15,6 +16,7 @@ export class AddressesService {
     note: string;
     userId: number;
     userEmail: string;
+    phoneNumber: string;
     isDefault: boolean;
   }) {
     const {
@@ -27,6 +29,7 @@ export class AddressesService {
       userEmail,
       userId,
       isDefault,
+      phoneNumber,
     } = args;
 
     if (isDefault) {
@@ -46,6 +49,7 @@ export class AddressesService {
         streetAddress,
         user: { id: userId },
         isDefault,
+        phoneNumber,
       },
       { userEmail },
     );
@@ -63,7 +67,8 @@ export class AddressesService {
       .leftJoinAndSelect(`${this.addressesRepository.entityName}.user`, 'user')
       .where(`${this.addressesRepository.entityName}.userId = :userId`, {
         userId,
-      });
+      })
+      .orderBy(`${this.addressesRepository.entityName}.isDefault`, 'DESC');
 
     const data = await this.addressesRepository._findAll(queryBuilder, {
       limit,
@@ -78,5 +83,52 @@ export class AddressesService {
       message: 'Get all successfully!!',
       data,
     };
+  }
+
+  async deleteMyAddress(id: number, userId: number, userEmail: string) {
+    const address = await this.addressesRepository._findOneOrFail({
+      where: { id, user: { id: userId, email: userEmail, isDeleted: false } },
+    });
+
+    if (address.isDefault) {
+      throw new BadRequestException('Can not delete default address!!');
+    }
+
+    await this.addressesRepository._softDelete(address.id, userEmail);
+
+    return null;
+  }
+
+  async setDefaultAddress(args: {
+    userId: number;
+    userEmail: string;
+    addressId: number;
+  }) {
+    const { addressId, userEmail, userId } = args;
+
+    return this.addressesRepository.manager.connection.transaction(
+      async (manager) => {
+        const addressRepo = manager.getRepository(Address);
+
+        const address = await addressRepo.findOneOrFail({
+          where: {
+            id: addressId,
+            user: { id: userId, email: userEmail, isDeleted: false },
+          },
+        });
+
+        if (!address.isDefault) {
+          await addressRepo.update(
+            { user: { id: userId }, isDefault: true, isDeleted: false },
+            { isDefault: false },
+          );
+
+          address.isDefault = true;
+          await addressRepo.save(address);
+        }
+
+        return address;
+      },
+    );
   }
 }
