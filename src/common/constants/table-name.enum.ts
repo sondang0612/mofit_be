@@ -6,4 +6,6 @@ export enum ETableName {
   CART = 'carts',
   CART_ITEM = 'cart_items',
   ADDRESS = 'addresses',
+  ORDER = 'orders',
+  ORDER_ITEM = 'order_items',
 }

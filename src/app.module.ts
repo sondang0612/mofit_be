@@ -17,6 +17,10 @@ import { UsersModule } from './modules/users/users.module';
 import { CartModule } from './modules/cart/cart.module';
 import { AddressesModule } from './modules/addresses/addresses.module';
 import { Address } from './database/entities/address.entity';
+import { OrdersModule } from './modules/orders/orders.module';
+import { Order } from './database/entities/order.entity';
+import { OrderItem } from './database/entities/order-item.entity';
+import { OrderItemsModule } from './modules/order-items/order-items.module';
 
 @Module({
   imports: [
@@ -28,7 +32,16 @@ import { Address } from './database/entities/address.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Product, Category, Attribute, User, CartItem, Address],
+      entities: [
+        Product,
+        Category,
+        Attribute,
+        User,
+        CartItem,
+        Address,
+        Order,
+        OrderItem,
+      ],
       synchronize: true,
     }),
     ProductsModule,
@@ -40,6 +53,8 @@ import { Address } from './database/entities/address.entity';
     CartItemsModule,
     CartModule,
     AddressesModule,
+    OrdersModule,
+    OrderItemsModule,
   ],
   providers: [JwtStrategy],
 })

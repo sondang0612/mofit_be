@@ -1,26 +1,55 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCartItemDto } from './dto/create-cart-item.dto';
-import { UpdateCartItemDto } from './dto/update-cart-item.dto';
+import { CartItemsRepository } from './cart-items.repository';
 
 @Injectable()
 export class CartItemsService {
-  create(createCartItemDto: CreateCartItemDto) {
-    return 'This action adds a new cartItem';
-  }
+  constructor(private readonly cartItemsRepository: CartItemsRepository) {}
 
-  findAll() {
-    return `This action returns all cartItems`;
-  }
+  async remove(args: {
+    userId: number;
+    userEmail: string;
+    cartItemId: number;
+  }) {
+    const { userId, userEmail, cartItemId } = args;
 
-  findOne(id: number) {
-    return `This action returns a #${id} cartItem`;
-  }
+    const cartItem = await this.cartItemsRepository._findOneOrFail({
+      where: {
+        user: { id: userId, isDeleted: false, email: userEmail },
+        id: cartItemId,
+      },
+    });
 
-  update(id: number, updateCartItemDto: UpdateCartItemDto) {
-    return `This action updates a #${id} cartItem`;
-  }
+    await this.cartItemsRepository._softDelete(cartItem.id, userEmail);
 
-  remove(id: number) {
-    return `This action removes a #${id} cartItem`;
+    return null;
+  }
+  async create(args: {
+    userId: number;
+    userEmail: string;
+    productId: number;
+    quantity: number;
+  }) {
+    const { userId, productId, quantity, userEmail } = args;
+    const cartItem = await this.cartItemsRepository._findOne({
+      where: { user: { id: userId }, product: { id: productId } },
+    });
+
+    if (cartItem) {
+      cartItem.quantity += quantity;
+      await this.cartItemsRepository.save(cartItem);
+    } else {
+      await this.cartItemsRepository._create(
+        {
+          product: { id: productId },
+          user: { id: userId },
+          quantity,
+        },
+        { userEmail },
+      );
+    }
+
+    return {
+      message: 'Add to cart successfully',
+    };
   }
 }

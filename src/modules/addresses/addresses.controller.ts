@@ -19,11 +19,11 @@ import { AddressPaginationDto } from './dto/address-pagination.dto';
 import { CreateAddressDto } from './dto/create-address.dto';
 
 @Controller({ path: EApiPathName.ADDRESSES })
+@UseGuards(JwtAuthGuard)
 export class AddressesController {
   constructor(private readonly addressesService: AddressesService) {}
 
-  @Post('/me')
-  @UseGuards(JwtAuthGuard)
+  @Post()
   create(@Request() req, @Body() createAddressDto: CreateAddressDto) {
     return this.addressesService.create({
       ...createAddressDto,
@@ -32,12 +32,8 @@ export class AddressesController {
     });
   }
 
-  @Get('/me')
-  @UseGuards(JwtAuthGuard)
-  getMyAddresses(
-    @Request() req,
-    @Query() addressPaginationDto: AddressPaginationDto,
-  ) {
+  @Get()
+  findAll(@Request() req, @Query() addressPaginationDto: AddressPaginationDto) {
     return this.addressesService.findAll({
       ...addressPaginationDto,
       limit: 50,
@@ -45,19 +41,17 @@ export class AddressesController {
     });
   }
 
-  @Delete('/:addressId/me')
-  @UseGuards(JwtAuthGuard)
+  @Delete('/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteMyAddress(@Request() req, @Param('addressId') addressId: number) {
+  remove(@Request() req, @Param('id') id: number) {
     return this.addressesService.deleteMyAddress(
-      addressId,
+      id,
       req?.user?.id,
       req?.user?.userEmail,
     );
   }
 
-  @Patch('/:addressId/me/default')
-  @UseGuards(JwtAuthGuard)
+  @Patch('/:addressId/default')
   setDefaultAddress(@Request() req, @Param('addressId') addressId: number) {
     return this.addressesService.setDefaultAddress({
       addressId,

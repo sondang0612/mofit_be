@@ -4,6 +4,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { CartItem } from './cart-item.entity';
 import { Address } from './address.entity';
+import { Order } from './order.entity';
 
 @Entity(ETableName.USER)
 export class User extends BaseEntity {
@@ -31,4 +32,7 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Address, (address) => address.user)
   addresses: Address[];
+
+  @OneToMany(() => Order, (order) => order.user)
+  orders: Order[];
 }
