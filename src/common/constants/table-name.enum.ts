@@ -8,4 +8,5 @@ export enum ETableName {
   ADDRESS = 'addresses',
   ORDER = 'orders',
   ORDER_ITEM = 'order_items',
+  PAYMENT = 'payments',
 }

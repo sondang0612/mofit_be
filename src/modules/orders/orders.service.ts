@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { EPaymentMethod } from 'src/common/constants/order.enum';
+import { ETableName } from 'src/common/constants/table-name.enum';
 import { DataSource, In } from 'typeorm';
-import { AddressesRepository } from '../addresses/addresses.repository';
-import { CartItemsRepository } from '../cart-items/cart-items.repository';
-import { OrderItemsRepository } from '../order-items/orders.repository';
 import { OrderPaginationDto } from './dto/address-pagination.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { OrdersRepository } from './orders.repository';
@@ -11,9 +10,6 @@ import { OrdersRepository } from './orders.repository';
 export class OrdersService {
   constructor(
     private readonly ordersRepository: OrdersRepository,
-    private readonly cartItemsRepository: CartItemsRepository,
-    private readonly addressesRepository: AddressesRepository,
-    private readonly orderItemsRepository: OrderItemsRepository,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -21,7 +17,7 @@ export class OrdersService {
     cartItemIds: number[];
     shippingMethod: string;
     shippingPrice: number;
-    paymentMethod: string;
+    paymentMethod: EPaymentMethod;
     discount: number;
     vat: number;
     subTotal: number;
@@ -29,6 +25,9 @@ export class OrdersService {
     userId: number;
     userEmail: string;
     addressId: number;
+    bank?: string;
+    cardType?: string;
+    transactionId?: string;
   }) {
     const {
       discount,
@@ -42,6 +41,9 @@ export class OrdersService {
       vat,
       addressId,
       cartItemIds,
+      bank,
+      cardType,
+      transactionId,
     } = args;
 
     const user = { id: userId, email: userEmail };
@@ -52,19 +54,18 @@ export class OrdersService {
 
     try {
       const [cartItems, address] = await Promise.all([
-        this.cartItemsRepository.find({
+        queryRunner.manager.find(ETableName.CART_ITEM, {
           where: {
             id: In(cartItemIds),
             user,
             isDeleted: false,
           },
           relations: ['product'],
-        }),
-        this.addressesRepository._findOneOrFail({
+        }) as any,
+        queryRunner.manager.findOneOrFail(ETableName.ADDRESS, {
           where: { id: addressId, user },
         }),
       ]);
-
       const order = (await queryRunner.manager.save(
         this.ordersRepository.create({
           address,
@@ -76,13 +77,14 @@ export class OrdersService {
           subTotal,
           totalPrice,
           user: { id: userId },
+          createdBy: userEmail,
         } as any),
       )) as any;
 
       await queryRunner.manager
         .createQueryBuilder()
         .insert()
-        .into('order_items')
+        .into(ETableName.ORDER_ITEM)
         .values(
           cartItems.map(
             (item) =>
@@ -91,16 +93,32 @@ export class OrdersService {
                 product: item.product,
                 quantity: item.quantity,
                 price: item.product.price,
+                createdBy: userEmail,
               }) as any,
           ),
         )
         .execute();
 
       await queryRunner.manager.update(
-        'cart_items',
+        ETableName.CART_ITEM,
         { user: { id: userId }, id: In(cartItemIds), isDeleted: false },
         { isDeleted: true },
       );
+
+      await queryRunner.manager
+        .createQueryBuilder()
+        .insert()
+        .into(ETableName.PAYMENT)
+        .values({
+          order: { id: order.id },
+          user: { id: userId },
+          totalPrice,
+          transactionId: transactionId || `COD-${order.id}-${Date.now()}`,
+          createdBy: userEmail,
+          bank,
+          cardType,
+        })
+        .execute();
 
       await queryRunner.commitTransaction();
 

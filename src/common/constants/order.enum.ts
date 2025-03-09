@@ -9,9 +9,9 @@ export enum EOrderStatus {
 
 export enum EShippingMethod {
   OWN_DELIVERY = 'own_delivery',
-  PAYMENT_GATEWAY = 'payment_gateway',
 }
 
 export enum EPaymentMethod {
   COD = 'cod',
+  PAYMENT_GATEWAY = 'payment_gateway',
 }

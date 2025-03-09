@@ -5,6 +5,7 @@ import { BaseEntity } from './base.entity';
 import { CartItem } from './cart-item.entity';
 import { Address } from './address.entity';
 import { Order } from './order.entity';
+import { Payment } from './payment.entity';
 
 @Entity(ETableName.USER)
 export class User extends BaseEntity {
@@ -35,4 +36,7 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
+
+  @OneToMany(() => Payment, (payment) => payment.user)
+  payments: Payment[];
 }

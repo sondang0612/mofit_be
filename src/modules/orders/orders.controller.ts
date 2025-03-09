@@ -50,7 +50,7 @@ export class OrdersController {
     return this.ordersService.create({
       ...createOrderDto,
       userId: req?.user?.id,
-      userEmail: req?.user?.userEmail,
+      userEmail: req?.user?.email,
     });
   }
 }

@@ -9,10 +9,7 @@ import { CategoriesModule } from '../categories/categories.module';
 import { CategoriesRepository } from '../categories/categories.repository';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Product, Category]),
-    forwardRef(() => CategoriesModule),
-  ],
+  imports: [TypeOrmModule.forFeature([Product, Category]), CategoriesModule],
   controllers: [ProductsController],
   providers: [ProductsService, ProductsRepository, CategoriesRepository],
   exports: [ProductsRepository],

@@ -1,5 +1,5 @@
 import { ETableName } from 'src/common/constants/table-name.enum';
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { OrderItem } from './order-item.entity';
 import { User } from './user.entity';
@@ -8,6 +8,7 @@ import {
   EPaymentMethod,
   EShippingMethod,
 } from 'src/common/constants/order.enum';
+import { Payment } from './payment.entity';
 
 @Entity(ETableName.ORDER)
 export class Order extends BaseEntity {
@@ -47,4 +48,7 @@ export class Order extends BaseEntity {
 
   @Column({ type: 'jsonb' })
   address: Record<string, any>;
+
+  @OneToOne(() => Payment, (payment) => payment.order)
+  payment: Payment;
 }

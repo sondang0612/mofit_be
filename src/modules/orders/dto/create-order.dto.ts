@@ -1,4 +1,11 @@
-import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+} from 'class-validator';
+import { EPaymentMethod } from 'src/common/constants/order.enum';
 
 export class CreateOrderDto {
   @IsArray()
@@ -12,9 +19,8 @@ export class CreateOrderDto {
   @IsNotEmpty()
   shippingPrice: number;
 
-  @IsString()
-  @IsNotEmpty()
-  paymentMethod: string;
+  @IsEnum(EPaymentMethod)
+  paymentMethod: EPaymentMethod;
 
   @IsNumber()
   @IsNotEmpty()
