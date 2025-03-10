@@ -23,6 +23,7 @@ export class AuthService {
     return this.jwtService.sign({
       id: payload.id,
       email: payload.email,
+      role: payload.role,
     });
   }
 
@@ -52,10 +53,13 @@ export class AuthService {
   }
 
   async login(createAuthDto: LoginAuthDto) {
-    const { password, email } = createAuthDto;
+    const { password, username, role } = createAuthDto;
 
-    const user = await this.usersService._findOne({
-      where: { email },
+    const user = await this.usersService.repository.findOne({
+      where: [
+        { email: username, role, isDeleted: false },
+        { username, role, isDeleted: false },
+      ],
     });
 
     if (!user) {
@@ -71,6 +75,7 @@ export class AuthService {
     return {
       access_token: this.generateToken(user),
       fullName: `${user.lastName} ${user.firstName}`,
+      role: user.role,
       message: 'Login successful',
     };
   }

@@ -6,6 +6,7 @@ import { CartItem } from './cart-item.entity';
 import { Address } from './address.entity';
 import { Order } from './order.entity';
 import { Payment } from './payment.entity';
+import { ERole } from 'src/common/constants/role.enum';
 
 @Entity(ETableName.USER)
 export class User extends BaseEntity {
@@ -27,6 +28,9 @@ export class User extends BaseEntity {
 
   @Column()
   lastName: string;
+
+  @Column({ type: 'enum', enum: ERole, default: ERole.USER })
+  role: ERole;
 
   @OneToMany(() => CartItem, (cartItem) => cartItem.user)
   cartItems: CartItem[];

@@ -1,32 +1,35 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  UseGuards,
-  Request,
+  Get,
+  Param,
+  Patch,
+  Post,
   Query,
 } from '@nestjs/common';
-import { OrdersService } from './orders.service';
+import { EApiPathName } from 'src/common/constants/api-path.enum';
+import { ERole } from 'src/common/constants/role.enum';
+import { GetUser, UserParams } from 'src/common/decorators/user.decorator';
+import { Permissions } from '../auth/guards/global-auth.guard';
+import { OrderPaginationDto } from './dto/address-pagination.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { EApiPathName } from 'src/common/constants/api-path.enum';
-import { OrderPaginationDto } from './dto/address-pagination.dto';
+import { OrdersService } from './orders.service';
 
 @Controller({ path: EApiPathName.ORDERS })
-@UseGuards(JwtAuthGuard)
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Get()
-  findAll(@Request() req, @Query() orderPaginationDto: OrderPaginationDto) {
+  @Permissions(ERole.USER)
+  findAll(
+    @GetUser() user: UserParams,
+    @Query() orderPaginationDto: OrderPaginationDto,
+  ) {
     return this.ordersService.findAll({
       ...orderPaginationDto,
-      userId: req?.user?.id,
+      userId: user?.id,
     });
   }
 
@@ -46,11 +49,12 @@ export class OrdersController {
   }
 
   @Post()
-  create(@Request() req, @Body() createOrderDto: CreateOrderDto) {
+  @Permissions(ERole.USER)
+  create(@GetUser() user: UserParams, @Body() createOrderDto: CreateOrderDto) {
     return this.ordersService.create({
       ...createOrderDto,
-      userId: req?.user?.id,
-      userEmail: req?.user?.email,
+      userId: user?.id,
+      userEmail: user?.email,
     });
   }
 }

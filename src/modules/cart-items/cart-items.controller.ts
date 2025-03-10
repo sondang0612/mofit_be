@@ -6,34 +6,35 @@ import {
   HttpStatus,
   Param,
   Post,
-  Request,
-  UseGuards,
 } from '@nestjs/common';
+import { EApiPathName } from 'src/common/constants/api-path.enum';
+import { ERole } from 'src/common/constants/role.enum';
+import { GetUser, UserParams } from 'src/common/decorators/user.decorator';
+import { Permissions } from '../auth/guards/global-auth.guard';
 import { CartItemsService } from './cart-items.service';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { EApiPathName } from 'src/common/constants/api-path.enum';
 
 @Controller({ path: EApiPathName.CART_ITEMS })
-@UseGuards(JwtAuthGuard)
 export class CartItemsController {
   constructor(private readonly cartItemsService: CartItemsService) {}
 
   @Post()
-  create(@Request() req, @Body() addToCartDto: CreateCartItemDto) {
+  @Permissions(ERole.USER)
+  create(@GetUser() user: UserParams, @Body() addToCartDto: CreateCartItemDto) {
     return this.cartItemsService.create({
       ...addToCartDto,
-      userId: req?.user?.id,
-      userEmail: req?.user?.email,
+      userId: user?.id,
+      userEmail: user?.email,
     });
   }
 
   @Delete('/:id')
+  @Permissions(ERole.USER)
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Request() req, @Param('id') id: number) {
+  remove(@GetUser() user: UserParams, @Param('id') id: number) {
     return this.cartItemsService.remove({
-      userId: req?.user?.id,
-      userEmail: req?.user?.email,
+      userId: user?.id,
+      userEmail: user?.email,
       cartItemId: id,
     });
   }

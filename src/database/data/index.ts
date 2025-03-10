@@ -1,3 +1,5 @@
+import { ERole } from 'src/common/constants/role.enum';
+
 export const categoriesData = [
   {
     name: 'Dresses',
@@ -12,6 +14,15 @@ export const usersData = [
     password: '123456',
     firstName: 'Son',
     lastName: 'Dang',
+  },
+  {
+    username: 'admin',
+    email: 'admin@gmail.com',
+    phoneNumber: '0919919950',
+    password: '1',
+    firstName: 'Admin',
+    lastName: 'Double Fish',
+    role: ERole.ADMIN,
   },
 ];
 

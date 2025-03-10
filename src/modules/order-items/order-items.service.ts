@@ -10,9 +10,9 @@ import { Repository } from 'typeorm';
 export class OrderItemsService extends TypeOrmBaseService<OrderItem> {
   constructor(
     @InjectRepository(OrderItem)
-    private readonly ordersRepository: Repository<OrderItem>,
+    private readonly orderItemsRepository: Repository<OrderItem>,
   ) {
-    super(ordersRepository);
+    super(orderItemsRepository);
   }
 
   create(createOrderItemDto: CreateOrderItemDto) {

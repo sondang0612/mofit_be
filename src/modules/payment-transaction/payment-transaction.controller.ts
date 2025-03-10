@@ -1,27 +1,21 @@
-import {
-  Body,
-  Controller,
-  Ip,
-  Post,
-  Req,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Ip, Post, Req } from '@nestjs/common';
 import { Request as Rq } from 'express';
 import { EApiPathName } from 'src/common/constants/api-path.enum';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { ERole } from 'src/common/constants/role.enum';
+import { GetUser, UserParams } from 'src/common/decorators/user.decorator';
+import { Permissions } from '../auth/guards/global-auth.guard';
+import { CreatePaymentTransactionOrderDto } from './dto/create-payment-transaction-order.dto';
 import { CreatePaymentTransactionDto } from './dto/create-payment-transaction.dto';
 import { PaymentTransactionService } from './payment-transaction.service';
-import { CreatePaymentTransactionOrderDto } from './dto/create-payment-transaction-order.dto';
 
 @Controller({ path: EApiPathName.PAYMENT_TRANSACTION })
-@UseGuards(JwtAuthGuard)
 export class PaymentTransactionController {
   constructor(
     private readonly paymentTransactionService: PaymentTransactionService,
   ) {}
 
   @Post()
+  @Permissions(ERole.USER)
   create(
     @Ip() ip: string,
     @Body() createPaymentTransactionDto: CreatePaymentTransactionDto,
@@ -37,14 +31,15 @@ export class PaymentTransactionController {
   }
 
   @Post('create-order')
+  @Permissions(ERole.USER)
   createOrder(
-    @Request() req,
+    @GetUser() user: UserParams,
     @Body() createPaymentTransactionDto: CreatePaymentTransactionOrderDto,
   ) {
     return this.paymentTransactionService.verifyAndCreateOrder({
       ...createPaymentTransactionDto,
-      userEmail: req?.user?.email,
-      userId: req?.user?.id,
+      userEmail: user?.email,
+      userId: user?.id,
     });
   }
 }
