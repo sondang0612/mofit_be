@@ -8,14 +8,14 @@ import { instanceToInstance } from 'class-transformer';
 import { comparePassword } from 'src/common/utils/comparePassword';
 import { hashPassword } from 'src/common/utils/hashPassword';
 import { User } from 'src/database/entities/user.entity';
-import { UsersRepository } from '../users/users.repository';
+import { UsersService } from '../users/users.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private userRepository: UsersRepository,
+    private usersService: UsersService,
     private jwtService: JwtService,
   ) {}
 
@@ -29,7 +29,7 @@ export class AuthService {
   async register(createAuthDto: RegisterAuthDto) {
     const { email, password, phoneNumber, username } = createAuthDto;
 
-    const existingUser = await this.userRepository.findOne({
+    const existingUser = await this.usersService._findOne({
       where: [{ email }, { phoneNumber }, { username }],
     });
 
@@ -40,7 +40,7 @@ export class AuthService {
     }
     const hashedPassword = await hashPassword(password);
 
-    const newUser = await this.userRepository.create({
+    const newUser = await this.usersService.repository.create({
       ...createAuthDto,
       password: hashedPassword,
     });
@@ -54,8 +54,8 @@ export class AuthService {
   async login(createAuthDto: LoginAuthDto) {
     const { password, email } = createAuthDto;
 
-    const user = await this.userRepository.findOne({
-      where: [{ email }],
+    const user = await this.usersService._findOne({
+      where: { email },
     });
 
     if (!user) {
@@ -78,7 +78,7 @@ export class AuthService {
   async getProfile(args: { id: number; email: string }) {
     const { id, email } = args;
 
-    const user = await this.userRepository._findOneOrFail({
+    const user = await this.usersService._findOneOrFail({
       where: { id, email },
     });
 
@@ -107,7 +107,7 @@ export class AuthService {
       userEmail,
     } = args;
 
-    const user = await this.userRepository._findOneOrFail({
+    const user = await this.usersService._findOneOrFail({
       where: { id: userId, email: userEmail },
     });
     if (currentPassword) {
@@ -127,7 +127,7 @@ export class AuthService {
     user.lastName = lastName;
     user.phoneNumber = phoneNumber;
 
-    await this.userRepository.save(user);
+    await this.usersService.repository.save(user);
 
     return {
       data: instanceToInstance(user),

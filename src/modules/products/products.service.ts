@@ -1,22 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { CategoriesRepository } from '../categories/categories.repository';
+import { Product } from 'src/database/entities/product.entity';
+import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
+import { CategoriesService } from '../categories/categories.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductPaginationDto } from './dto/product-pagination.dto';
-import { ProductsRepository } from './products.repository';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
-export class ProductsService {
+export class ProductsService extends TypeOrmBaseService<Product> {
   constructor(
-    private readonly productRepository: ProductsRepository,
-    private readonly categoriesRepository: CategoriesRepository,
-  ) {}
+    @InjectRepository(Product)
+    private readonly productRepository: Repository<Product>,
+    private readonly categoriesService: CategoriesService,
+  ) {
+    super(productRepository);
+  }
 
   async create(createProductDto: CreateProductDto) {
-    const categories = await this.categoriesRepository._findByIdsOrFail(
+    const categories = await this.categoriesService._findByIdsOrFail(
       createProductDto.categoryIds,
     );
 
-    const product = await this.productRepository._create({
+    const product = await this._create({
       ...createProductDto,
       categories,
     });
@@ -31,15 +37,9 @@ export class ProductsService {
     const { attributeName, limit, page, sortBy, sort } = paginationDto;
 
     const queryBuilder = this.productRepository
-      .createQueryBuilder(this.productRepository.entityName)
-      .leftJoinAndSelect(
-        `${this.productRepository.entityName}.attributes`,
-        'attributes',
-      )
-      .leftJoinAndSelect(
-        `${this.productRepository.entityName}.category`,
-        'category',
-      );
+      .createQueryBuilder(this.entityName)
+      .leftJoinAndSelect(`${this.entityName}.attributes`, 'attributes')
+      .leftJoinAndSelect(`${this.entityName}.category`, 'category');
 
     if (attributeName) {
       queryBuilder.andWhere('attributes.name ILIKE :attributeName', {
@@ -47,7 +47,7 @@ export class ProductsService {
       });
     }
 
-    const data = await this.productRepository._findAll(queryBuilder, {
+    const data = await this._findAll(queryBuilder, {
       limit,
       page,
       sort: {

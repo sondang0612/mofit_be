@@ -1,13 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { CategoriesRepository } from './categories.repository';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { Repository } from 'typeorm';
+import { Category } from 'src/database/entities/category.entity';
+import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
-export class CategoriesService {
-  constructor(private readonly categoriesRepository: CategoriesRepository) {}
+export class CategoriesService extends TypeOrmBaseService<Category> {
+  constructor(
+    @InjectRepository(Category)
+    private readonly categoriesRepository: Repository<Category>,
+  ) {
+    super(categoriesRepository);
+  }
 
   create(createCategoryDto: CreateCategoryDto) {
-    return this.categoriesRepository._create(createCategoryDto);
+    return this._create(createCategoryDto);
   }
 
   findAll() {

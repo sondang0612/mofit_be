@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { instanceToInstance } from 'class-transformer';
-import { UsersRepository } from '../users/users.repository';
-import { CartItemsRepository } from '../cart-items/cart-items.repository';
+import { CartItemsService } from '../cart-items/cart-items.service';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class CartService {
   constructor(
-    private readonly userRepository: UsersRepository,
-    private readonly cartItemsRepository: CartItemsRepository,
+    private readonly usersService: UsersService,
+    private readonly cartItemsService: CartItemsService,
   ) {}
 
   async getMyCart(args: { userId: number }) {
     const { userId } = args;
 
-    const cartItems = await this.cartItemsRepository.find({
+    const cartItems = await this.cartItemsService.repository.find({
       where: { user: { id: userId, isDeleted: false }, isDeleted: false },
       relations: ['product'],
     });

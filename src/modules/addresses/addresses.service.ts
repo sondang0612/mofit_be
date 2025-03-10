@@ -1,11 +1,18 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { AddressesRepository } from './addresses.repository';
-import { AddressPaginationDto } from './dto/address-pagination.dto';
 import { Address } from 'src/database/entities/address.entity';
+import { AddressPaginationDto } from './dto/address-pagination.dto';
+import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
-export class AddressesService {
-  constructor(private readonly addressesRepository: AddressesRepository) {}
+export class AddressesService extends TypeOrmBaseService<Address> {
+  constructor(
+    @InjectRepository(Address)
+    private readonly addressesRepository: Repository<Address>,
+  ) {
+    super(addressesRepository);
+  }
 
   async create(args: {
     firstName: string;
@@ -39,7 +46,7 @@ export class AddressesService {
       );
     }
 
-    await this.addressesRepository._create(
+    await this._create(
       {
         city,
         district,
@@ -63,14 +70,14 @@ export class AddressesService {
     const { limit, page, sortBy, sort, userId } = args;
 
     const queryBuilder = this.addressesRepository
-      .createQueryBuilder(this.addressesRepository.entityName)
-      .leftJoinAndSelect(`${this.addressesRepository.entityName}.user`, 'user')
-      .where(`${this.addressesRepository.entityName}.userId = :userId`, {
+      .createQueryBuilder(this.entityName)
+      .leftJoinAndSelect(`${this.entityName}.user`, 'user')
+      .where(`${this.entityName}.userId = :userId`, {
         userId,
       })
-      .orderBy(`${this.addressesRepository.entityName}.isDefault`, 'DESC');
+      .orderBy(`${this.entityName}.isDefault`, 'DESC');
 
-    const data = await this.addressesRepository._findAll(queryBuilder, {
+    const data = await this._findAll(queryBuilder, {
       limit,
       page,
       sort: {
@@ -86,7 +93,7 @@ export class AddressesService {
   }
 
   async deleteMyAddress(id: number, userId: number, userEmail: string) {
-    const address = await this.addressesRepository._findOneOrFail({
+    const address = await this._findOneOrFail({
       where: { id, user: { id: userId, email: userEmail, isDeleted: false } },
     });
 
@@ -94,7 +101,7 @@ export class AddressesService {
       throw new BadRequestException('Can not delete default address!!');
     }
 
-    await this.addressesRepository._softDelete(address.id, userEmail);
+    await this._softDelete(address.id, userEmail);
 
     return null;
   }

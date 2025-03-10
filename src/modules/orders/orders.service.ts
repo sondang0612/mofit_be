@@ -1,17 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { EPaymentMethod } from 'src/common/constants/order.enum';
 import { ETableName } from 'src/common/constants/table-name.enum';
-import { DataSource, In } from 'typeorm';
+import { Order } from 'src/database/entities/order.entity';
+import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
+import { DataSource, In, Repository } from 'typeorm';
 import { OrderPaginationDto } from './dto/address-pagination.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { OrdersRepository } from './orders.repository';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
-export class OrdersService {
+export class OrdersService extends TypeOrmBaseService<Order> {
   constructor(
-    private readonly ordersRepository: OrdersRepository,
+    @InjectRepository(Order)
+    private readonly ordersRepository: Repository<Order>,
     private readonly dataSource: DataSource,
-  ) {}
+  ) {
+    super(ordersRepository);
+  }
 
   async create(args: {
     cartItemIds: number[];
@@ -138,17 +143,14 @@ export class OrdersService {
     const { limit, page, sortBy, sort, userId } = args;
 
     const queryBuilder = this.ordersRepository
-      .createQueryBuilder(this.ordersRepository.entityName)
-      .leftJoinAndSelect(`${this.ordersRepository.entityName}.user`, 'user')
-      .leftJoinAndSelect(
-        `${this.ordersRepository.entityName}.orderItems`,
-        'orderItems',
-      )
-      .where(`${this.ordersRepository.entityName}.userId = :userId`, {
+      .createQueryBuilder(this.entityName)
+      .leftJoinAndSelect(`${this.entityName}.user`, 'user')
+      .leftJoinAndSelect(`${this.entityName}.orderItems`, 'orderItems')
+      .where(`${this.entityName}.userId = :userId`, {
         userId,
       });
 
-    const data = await this.ordersRepository._findAll(queryBuilder, {
+    const data = await this._findAll(queryBuilder, {
       limit,
       page,
       sort: {

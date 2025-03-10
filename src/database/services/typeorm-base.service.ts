@@ -25,85 +25,40 @@ export class TypeOrmBaseService<TEntity extends BaseEntity> {
     this.entityName = this.repository.metadata.name;
   }
 
-  async createOne<TCreateDto extends DeepPartial<TEntity>>(
+  async _create<TCreateDto extends DeepPartial<TEntity>>(
     createDto: TCreateDto,
     opts: CreateEntityOpts = {},
   ): Promise<TEntity> {
-    const { saveOptions } = opts;
-    const entity = this.createEntity(createDto, opts);
+    const { saveOptions, userEmail } = opts;
+
+    const entity = this.repository.create(createDto);
+    entity.createdBy = userEmail || EDefaultEmail.SYSTEM_GENERATED;
+
     const newDoc = await this.repository.save(entity, saveOptions);
     return newDoc;
   }
 
-  createEntity<TCreateDto extends DeepPartial<TEntity>>(
-    createDto: TCreateDto,
-    opts: CreateEntityOpts = {},
-  ) {
-    const { userEmail } = opts;
-    const entity = this.repository.create(createDto);
-    entity.createdBy = userEmail || EDefaultEmail.SYSTEM_GENERATED;
-    return entity;
-  }
-
-  async getOne(
-    findOneOptions: FindOneOptions<TEntity>,
-  ): Promise<TEntity | null> {
-    return this.repository.findOne({
-      ...findOneOptions,
-      where: {
-        ...findOneOptions.where,
-        isDeleted: false,
-      } as FindOptionsWhere<TEntity>,
-    });
-  }
-
-  async getOneOrFail(
-    findOneOptions: FindOneOptions<TEntity>,
-    opts: Partial<{ errMsg: string }> = {},
-  ): Promise<TEntity> {
-    const entity = await this.getOne(findOneOptions);
-    if (!entity) {
-      throw new NotFoundException(
-        opts.errMsg || `[${this.entityName}] Not found`,
-      );
-    }
-    return entity;
-  }
-
-  async createMulti<TCreateDto extends DeepPartial<TEntity>>(
+  async _createMany<TCreateDto extends DeepPartial<TEntity>>(
     createDtos: TCreateDto[],
     opts: CreateEntityOpts = {},
   ): Promise<TEntity[]> {
     const { saveOptions } = opts;
-    const entities = this.repository.create(createDtos);
+    const entities = await this.repository.create(createDtos);
+
     return await this.repository.save(entities, saveOptions);
   }
 
-  async findByIdsOrFail(ids: number[]): Promise<TEntity[]> {
-    const entities = await this.repository.findBy({
-      id: In(ids),
-    } as FindOptionsWhere<TEntity>);
-    if (entities.length === 0) {
-      throw new NotFoundException(
-        `[${this.entityName}] No records found for given IDs`,
-      );
+  public async _findOneOrFail(
+    options: FindOneOptions<TEntity>,
+  ): Promise<TEntity> {
+    const entity = await this._findOne(options);
+    if (!entity) {
+      throw new NotFoundException(`${this.entityName} not found`);
     }
-    return entities;
+    return entity;
   }
 
-  async findBy(
-    where: FindOptionsWhere<TEntity> | FindOptionsWhere<TEntity>[],
-  ): Promise<TEntity[]> {
-    const entities = await this.repository.findBy(where);
-    if (entities.length === 0) {
-      throw new NotFoundException(
-        `[${this.entityName}] No records found for given Options`,
-      );
-    }
-    return entities;
-  }
-
-  public async getAll(
+  public async _findAll(
     queryBuilder: SelectQueryBuilder<TEntity>,
     {
       page = 1,
@@ -120,12 +75,12 @@ export class TypeOrmBaseService<TEntity extends BaseEntity> {
     });
 
     if (sort && sort.field) {
-      queryBuilder.orderBy(
+      queryBuilder.addOrderBy(
         `${this.entityName}.${sort.field}`,
         sort.order as any,
       );
     } else {
-      queryBuilder.orderBy(`${this.entityName}.createdAt`, 'DESC');
+      queryBuilder.addOrderBy(`${this.entityName}.createdAt`, 'DESC');
     }
 
     queryBuilder.take(limit);
@@ -137,5 +92,61 @@ export class TypeOrmBaseService<TEntity extends BaseEntity> {
       data: instanceToInstance(data),
       total,
     };
+  }
+
+  async _findByIdsOrFail(ids: number[]): Promise<TEntity[]> {
+    const entities = await this.repository.findBy({
+      id: In(ids),
+      isDeleted: false,
+    } as FindOptionsWhere<TEntity>);
+    if (entities.length === 0) {
+      throw new NotFoundException(
+        `[${this.entityName}] No records found for given IDs`,
+      );
+    }
+    return entities;
+  }
+
+  async _findOrCreate<TCreateDto extends DeepPartial<TEntity>>(
+    findOptions: FindOneOptions<TEntity>,
+    createDto: TCreateDto,
+    opts: CreateEntityOpts = {},
+  ): Promise<TEntity> {
+    let entity = await this._findOne(findOptions);
+
+    if (!entity) {
+      entity = await this._create(createDto, opts);
+    }
+
+    return entity;
+  }
+
+  public async _findOne(options: FindOneOptions<TEntity>): Promise<TEntity> {
+    const entity = await this.repository.findOne({
+      ...options,
+      where: { ...options.where, isDeleted: false as any },
+    });
+    return entity;
+  }
+
+  async _softDelete(id: number | number[], userEmail?: string): Promise<void> {
+    const ids = Array.isArray(id) ? id : [id];
+
+    if (ids.length === 0) {
+      return;
+    }
+
+    const updateData = {
+      isDeleted: true,
+      updatedAt: new Date(),
+      createdBy: userEmail || EDefaultEmail.SYSTEM_GENERATED,
+    };
+
+    await this.repository
+      .createQueryBuilder()
+      .update(this.entityName)
+      .set(updateData as any)
+      .where('id IN (:...ids)', { ids })
+      .execute();
   }
 }

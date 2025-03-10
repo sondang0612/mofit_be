@@ -7,18 +7,18 @@ import {
   usersData,
 } from 'src/database/data';
 import { In } from 'typeorm';
-import { AttributesRepository } from '../attributes/attributes.repository';
-import { CategoriesRepository } from '../categories/categories.repository';
-import { ProductsRepository } from '../products/products.repository';
-import { UsersRepository } from '../users/users.repository';
+import { AttributesService } from '../attributes/attributes.service';
+import { CategoriesService } from '../categories/categories.service';
+import { ProductsService } from '../products/products.service';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class MockDataService {
   constructor(
-    private readonly categoriesRepository: CategoriesRepository,
-    private readonly productsRepository: ProductsRepository,
-    private readonly attributesRepository: AttributesRepository,
-    private readonly usersRepository: UsersRepository,
+    private readonly categoriesService: CategoriesService,
+    private readonly productsService: ProductsService,
+    private readonly attributesService: AttributesService,
+    private readonly usersService: UsersService,
   ) {}
   async run() {
     try {
@@ -36,11 +36,11 @@ export class MockDataService {
   }
 
   async importCategories() {
-    await this.categoriesRepository._createMany(categoriesData as any);
+    await this.categoriesService._createMany(categoriesData as any);
   }
 
   async importAttributes() {
-    await this.attributesRepository._createMany(attributesData as any);
+    await this.attributesService._createMany(attributesData as any);
   }
 
   async importUsersData() {
@@ -51,16 +51,16 @@ export class MockDataService {
       })),
     );
 
-    await this.usersRepository._createMany(hashedPasswordUsersData as any);
+    await this.usersService._createMany(hashedPasswordUsersData as any);
   }
 
   async importProducts() {
     const products = await Promise.all(
       productsData.map(async (product) => {
-        const category = await this.categoriesRepository.findOne({
+        const category = await this.categoriesService._findOne({
           where: { name: product.categoryName },
         });
-        const attributes = await this.attributesRepository.findBy({
+        const attributes = await this.attributesService.repository.findBy({
           name: In(product.attributeNames),
         });
 
@@ -72,6 +72,6 @@ export class MockDataService {
       }),
     );
 
-    await this.productsRepository._createMany(products as any);
+    await this.productsService._createMany(products as any);
   }
 }

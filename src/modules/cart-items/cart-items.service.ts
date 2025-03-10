@@ -1,9 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { CartItemsRepository } from './cart-items.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CartItem } from 'src/database/entities/cart-item.entity';
+import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
+import { Repository } from 'typeorm';
 
 @Injectable()
-export class CartItemsService {
-  constructor(private readonly cartItemsRepository: CartItemsRepository) {}
+export class CartItemsService extends TypeOrmBaseService<CartItem> {
+  constructor(
+    @InjectRepository(CartItem)
+    private readonly cartItemsRepository: Repository<CartItem>,
+  ) {
+    super(cartItemsRepository);
+  }
 
   async remove(args: {
     userId: number;
@@ -12,14 +20,14 @@ export class CartItemsService {
   }) {
     const { userId, userEmail, cartItemId } = args;
 
-    const cartItem = await this.cartItemsRepository._findOneOrFail({
+    const cartItem = await this._findOneOrFail({
       where: {
         user: { id: userId, isDeleted: false, email: userEmail },
         id: cartItemId,
       },
     });
 
-    await this.cartItemsRepository._softDelete(cartItem.id, userEmail);
+    await this._softDelete(cartItem.id, userEmail);
 
     return null;
   }
@@ -30,7 +38,7 @@ export class CartItemsService {
     quantity: number;
   }) {
     const { userId, productId, quantity, userEmail } = args;
-    const cartItem = await this.cartItemsRepository._findOne({
+    const cartItem = await this._findOne({
       where: { user: { id: userId }, product: { id: productId } },
     });
 
@@ -38,7 +46,7 @@ export class CartItemsService {
       cartItem.quantity += quantity;
       await this.cartItemsRepository.save(cartItem);
     } else {
-      await this.cartItemsRepository._create(
+      await this._create(
         {
           product: { id: productId },
           user: { id: userId },

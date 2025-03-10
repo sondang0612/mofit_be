@@ -11,10 +11,10 @@ import { CategoriesModule } from './modules/categories/categories.module';
 import { MockDataModule } from './modules/mock-data/mock-data.module';
 import { OrderItemsModule } from './modules/order-items/order-items.module';
 import { OrdersModule } from './modules/orders/orders.module';
-import { ProductsModule } from './modules/products/products.module';
-import { UsersModule } from './modules/users/users.module';
 import { PaymentTransactionModule } from './modules/payment-transaction/payment-transaction.module';
 import { PaymentsModule } from './modules/payments/payments.module';
+import { ProductsModule } from './modules/products/products.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
