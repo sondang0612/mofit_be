@@ -8,12 +8,14 @@ import { EEnv } from 'src/common/constants/env.enum';
 import { sortObject } from 'src/common/utils/sortObject';
 import { CreatePaymentTransactionOrderDto } from './dto/create-payment-transaction-order.dto';
 import { OrdersService } from '../orders/orders.service';
+import { PaymentsRepository } from '../payments/payments.repository';
 
 @Injectable()
 export class PaymentTransactionService {
   constructor(
     private readonly configService: ConfigService,
     private readonly orderService: OrdersService,
+    private readonly paymentsRepository: PaymentsRepository,
   ) {}
 
   private generateOrderId(): string {
@@ -89,6 +91,14 @@ export class PaymentTransactionService {
     const result = await this.verify(query);
 
     if (result) {
+      const payment = await this.paymentsRepository._findOne({
+        where: { transactionId: result?.transactionId },
+      });
+
+      if (payment) {
+        throw new BadRequestException('Invalid Payment!!');
+      }
+
       return this.orderService.create({ ...createOrderDto, ...result });
     }
 
