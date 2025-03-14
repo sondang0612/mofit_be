@@ -6,7 +6,10 @@ import { Product } from './product.entity';
 @Entity({ name: ETableName.ATTIRBUTE })
 export class Attribute extends BaseEntity {
   @Column({ type: 'varchar', length: 255 })
-  name: string;
+  label: string;
+
+  @Column({ type: 'varchar', length: 255 })
+  value: string;
 
   @ManyToMany(() => Product, (product) => product.attributes)
   products: Product[];

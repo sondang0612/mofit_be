@@ -3,6 +3,7 @@ import { hashPassword } from 'src/common/utils/hashPassword';
 import {
   attributesData,
   categoriesData,
+  discountsData,
   productsData,
   usersData,
 } from 'src/database/data';
@@ -11,6 +12,7 @@ import { AttributesService } from '../attributes/attributes.service';
 import { CategoriesService } from '../categories/categories.service';
 import { ProductsService } from '../products/products.service';
 import { UsersService } from '../users/users.service';
+import { DiscountsService } from '../discounts/discounts.service';
 
 @Injectable()
 export class MockDataService {
@@ -19,10 +21,12 @@ export class MockDataService {
     private readonly productsService: ProductsService,
     private readonly attributesService: AttributesService,
     private readonly usersService: UsersService,
+    private readonly discountsService: DiscountsService,
   ) {}
   async run() {
     try {
       await this.importCategories();
+      await this.importDiscounts();
       await this.importAttributes();
       await this.importProducts();
       await this.importUsersData();
@@ -43,6 +47,9 @@ export class MockDataService {
     await this.attributesService._createMany(attributesData as any);
   }
 
+  async importDiscounts() {
+    await this.discountsService._createMany(discountsData as any);
+  }
   async importUsersData() {
     const hashedPasswordUsersData = await Promise.all(
       usersData?.map(async (item) => ({
@@ -53,21 +60,35 @@ export class MockDataService {
 
     await this.usersService._createMany(hashedPasswordUsersData as any);
   }
-
   async importProducts() {
     const products = await Promise.all(
       productsData.map(async (product) => {
+        let discount = null;
         const category = await this.categoriesService._findOne({
           where: { name: product.categoryName },
         });
         const attributes = await this.attributesService.repository.findBy({
-          name: In(product.attributeNames),
+          value: In(product.attributeValues),
+          isDeleted: false,
         });
+
+        if (product?.discountPercentage) {
+          discount = await this.discountsService._findOne({
+            where: { percentage: product?.discountPercentage },
+          });
+        }
 
         return {
           ...product,
-          category: category,
+          category,
           attributes,
+          ...(discount
+            ? {
+                discount,
+                finalPrice:
+                  product.price - product.price * (discount.percentage / 100),
+              }
+            : { finalPrice: product.price }),
         };
       }),
     );

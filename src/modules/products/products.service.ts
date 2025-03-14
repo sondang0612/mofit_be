@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from 'src/database/entities/product.entity';
 import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
+import { Repository } from 'typeorm';
 import { CategoriesService } from '../categories/categories.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductPaginationDto } from './dto/product-pagination.dto';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-
+import { SortOrder } from 'src/common/dtos/pagination.dto';
 @Injectable()
 export class ProductsService extends TypeOrmBaseService<Product> {
   constructor(
@@ -34,17 +34,38 @@ export class ProductsService extends TypeOrmBaseService<Product> {
   }
 
   async findAll(paginationDto: ProductPaginationDto) {
-    const { attributeName, limit, page, sortBy, sort } = paginationDto;
+    const { attributeValue, limit, page } = paginationDto;
+    let { sortBy, sort } = paginationDto;
 
     const queryBuilder = this.productRepository
       .createQueryBuilder(this.entityName)
       .leftJoinAndSelect(`${this.entityName}.attributes`, 'attributes')
-      .leftJoinAndSelect(`${this.entityName}.category`, 'category');
+      .leftJoinAndSelect(`${this.entityName}.category`, 'category')
+      .leftJoinAndSelect(`${this.entityName}.discount`, 'discount');
 
-    if (attributeName) {
-      queryBuilder.andWhere('attributes.name ILIKE :attributeName', {
-        attributeName: `%${attributeName}%`,
-      });
+    switch (attributeValue) {
+      case undefined:
+        break;
+
+      case 'new_arrivals':
+      case 'best_seller':
+      case 'top_rated':
+      case 'featured':
+        queryBuilder.andWhere('attributes.value = :attributeValue', {
+          attributeValue,
+        });
+        break;
+      case 'price_desc':
+        sortBy = 'finalPrice';
+        sort = SortOrder.DESC;
+        break;
+      case 'price_asc':
+        sortBy = 'finalPrice';
+        sort = SortOrder.ASC;
+        break;
+
+      default:
+        break;
     }
 
     const data = await this._findAll(queryBuilder, {

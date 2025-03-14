@@ -8,11 +8,9 @@ export type UserParams = {
   role: ERole;
 };
 
-export const GetUser = createParamDecorator(
-  (data: unknown, context: ExecutionContext) => {
-    const request = context.switchToHttp().getRequest();
-    const result: UserParams = request?.user || {};
+export const GetUser = createParamDecorator((_, context: ExecutionContext) => {
+  const request = context.switchToHttp().getRequest();
+  const result: UserParams = request?.user || {};
 
-    return result;
-  },
-);
+  return result;
+});

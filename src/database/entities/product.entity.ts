@@ -10,6 +10,7 @@ import {
 import { BaseEntity } from './base.entity';
 import { Category } from './category.entity';
 import { Attribute } from './attribute.entity';
+import { Discount } from './discount.entity';
 
 @Entity(ETableName.PRODUCT)
 export class Product extends BaseEntity {
@@ -34,8 +35,8 @@ export class Product extends BaseEntity {
   })
   ratings: number;
 
-  @Column()
-  totalReviews: string;
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  finalPrice: number;
 
   @ManyToOne(() => Category, (category) => category.products)
   @JoinColumn({ name: 'category_id' })
@@ -48,4 +49,10 @@ export class Product extends BaseEntity {
     inverseJoinColumn: { name: 'attribute_id', referencedColumnName: 'id' },
   })
   attributes: Attribute[];
+
+  @ManyToOne(() => Discount, (discount) => discount.products, {
+    nullable: true,
+  })
+  @JoinColumn({ name: 'discount_id' })
+  discount: Discount;
 }
