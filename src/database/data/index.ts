@@ -12,6 +12,15 @@ export const categoriesData = [
   },
 ];
 
+export const brandsData = [
+  {
+    name: 'Double Fish',
+  },
+  {
+    name: 'Mofit',
+  },
+];
+
 export const usersData = [
   {
     username: 'dhson0612',
@@ -68,6 +77,7 @@ export const productsData = [
   {
     id: 233,
     categoryName: 'Dresses',
+    brandName: 'Double Fish',
     attributeValues: ['new_arrivals', 'featured'],
     title: 'Cropped Faux Leather Jacket',
     price: 29,
@@ -81,6 +91,7 @@ export const productsData = [
   {
     id: 234,
     categoryName: 'Dresses',
+    brandName: 'Double Fish',
     attributeValues: ['new_arrivals'],
     title: 'Calvin Shorts',
     price: 62,
@@ -93,6 +104,7 @@ export const productsData = [
   {
     id: 235,
     categoryName: 'Dresses',
+    brandName: 'Double Fish',
     attributeValues: ['best_seller', 'featured'],
     title: 'Giordonal',
     price: 17,
@@ -106,6 +118,7 @@ export const productsData = [
   {
     id: 241,
     categoryName: 'Dresses',
+    brandName: 'Double Fish',
     attributeValues: ['best_seller'],
     title: 'Fancies',
     price: 29,
@@ -118,6 +131,7 @@ export const productsData = [
   {
     id: 242,
     categoryName: 'Dresses',
+    brandName: 'Double Fish',
     attributeValues: ['top_rated', 'featured'],
     title: 'Jogarbola',
     price: 62,
@@ -130,6 +144,7 @@ export const productsData = [
   {
     id: 243,
     categoryName: 'Dresses',
+    brandName: 'Double Fish',
     attributeValues: ['top_rated', 'featured'],
     title: 'Kirby T-Shirt',
     price: 17,
@@ -142,6 +157,7 @@ export const productsData = [
   {
     id: 244,
     categoryName: 'Dresses',
+    brandName: 'Mofit',
     attributeValues: ['top_rated', 'featured'],
     title: 'Cableknit Shawl',
     price: 99,
@@ -155,6 +171,7 @@ export const productsData = [
   {
     id: 245,
     categoryName: 'Dresses',
+    brandName: 'Mofit',
     attributeValues: ['best_seller', 'featured'],
     title: 'Colorful Jacket',
     price: 29,
@@ -168,6 +185,7 @@ export const productsData = [
   {
     id: 301,
     categoryName: 'Shoes',
+    brandName: 'Double Fish',
     attributeValues: ['new_arrivals', 'featured'],
     title: 'Running Sneakers',
     price: 75,
@@ -181,6 +199,7 @@ export const productsData = [
   {
     id: 302,
     categoryName: 'Shoes',
+    brandName: 'Double Fish',
     attributeValues: ['best_seller'],
     title: 'Leather Loafers',
     price: 120,
@@ -193,6 +212,7 @@ export const productsData = [
   {
     id: 303,
     categoryName: 'Shoes',
+    brandName: 'Mofit',
     attributeValues: ['top_rated', 'featured'],
     title: 'High-Top Sneakers',
     price: 90,
@@ -205,6 +225,7 @@ export const productsData = [
   {
     id: 304,
     categoryName: 'Shoes',
+    brandName: 'Double Fish',
     attributeValues: ['best_seller', 'featured'],
     title: 'Casual Canvas Shoes',
     price: 55,
@@ -217,6 +238,7 @@ export const productsData = [
   {
     id: 305,
     categoryName: 'Shoes',
+    brandName: 'Mofit',
     attributeValues: ['new_arrivals'],
     title: 'Formal Derby Shoes',
     price: 140,
@@ -229,6 +251,7 @@ export const productsData = [
   {
     id: 401,
     categoryName: 'Accessories',
+    brandName: 'Double Fish',
     attributeValues: ['top_rated'],
     title: 'Leather Wallet',
     price: 50,
@@ -242,6 +265,7 @@ export const productsData = [
   {
     id: 402,
     categoryName: 'Accessories',
+    brandName: 'Mofit',
     attributeValues: ['best_seller'],
     title: 'Classic Wristwatch',
     price: 200,
@@ -254,6 +278,7 @@ export const productsData = [
   {
     id: 403,
     categoryName: 'Accessories',
+    brandName: 'Double Fish',
     attributeValues: ['new_arrivals', 'featured'],
     title: 'Stylish Sunglasses',
     price: 80,
@@ -266,6 +291,7 @@ export const productsData = [
   {
     id: 404,
     categoryName: 'Accessories',
+    brandName: 'Double Fish',
     attributeValues: ['best_seller'],
     title: 'Canvas Tote Bag',
     price: 35,
@@ -278,6 +304,7 @@ export const productsData = [
   {
     id: 405,
     categoryName: 'Accessories',
+    brandName: 'Mofit',
     attributeValues: ['top_rated', 'featured'],
     title: 'Luxury Belt',
     price: 100,

@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { hashPassword } from 'src/common/utils/hashPassword';
 import {
   attributesData,
+  brandsData,
   categoriesData,
   discountsData,
   productsData,
@@ -13,6 +14,7 @@ import { CategoriesService } from '../categories/categories.service';
 import { ProductsService } from '../products/products.service';
 import { UsersService } from '../users/users.service';
 import { DiscountsService } from '../discounts/discounts.service';
+import { BrandsService } from '../brands/brands.service';
 
 @Injectable()
 export class MockDataService {
@@ -22,10 +24,12 @@ export class MockDataService {
     private readonly attributesService: AttributesService,
     private readonly usersService: UsersService,
     private readonly discountsService: DiscountsService,
+    private readonly brandService: BrandsService,
   ) {}
   async run() {
     try {
       await this.importCategories();
+      await this.importBrands();
       await this.importDiscounts();
       await this.importAttributes();
       await this.importProducts();
@@ -50,6 +54,11 @@ export class MockDataService {
   async importDiscounts() {
     await this.discountsService._createMany(discountsData as any);
   }
+
+  async importBrands() {
+    await this.brandService._createMany(brandsData as any);
+  }
+
   async importUsersData() {
     const hashedPasswordUsersData = await Promise.all(
       usersData?.map(async (item) => ({
@@ -78,10 +87,15 @@ export class MockDataService {
           });
         }
 
+        const brand = await this.brandService._findOne({
+          where: { name: product?.brandName },
+        });
+
         return {
           ...product,
           category,
           attributes,
+          brand,
           ...(discount
             ? {
                 discount,

@@ -34,14 +34,23 @@ export class ProductsService extends TypeOrmBaseService<Product> {
   }
 
   async findAll(paginationDto: ProductPaginationDto) {
-    const { attributeValue, limit, page } = paginationDto;
+    const {
+      attributeValue,
+      limit,
+      page,
+      category,
+      brands,
+      minPrice,
+      maxPrice,
+    } = paginationDto;
     let { sortBy, sort } = paginationDto;
 
     const queryBuilder = this.productRepository
       .createQueryBuilder(this.entityName)
       .leftJoinAndSelect(`${this.entityName}.attributes`, 'attributes')
       .leftJoinAndSelect(`${this.entityName}.category`, 'category')
-      .leftJoinAndSelect(`${this.entityName}.discount`, 'discount');
+      .leftJoinAndSelect(`${this.entityName}.discount`, 'discount')
+      .leftJoinAndSelect(`${this.entityName}.brand`, 'brand');
 
     switch (attributeValue) {
       case undefined:
@@ -66,6 +75,28 @@ export class ProductsService extends TypeOrmBaseService<Product> {
 
       default:
         break;
+    }
+
+    if (category) {
+      queryBuilder.andWhere('category.id = :category', {
+        category,
+      });
+    }
+
+    if (Array.isArray(brands)) {
+      queryBuilder.andWhere('brand.id IN (:...brands)', { brands });
+    }
+
+    if (minPrice) {
+      queryBuilder.andWhere('price >= :minPrice', {
+        minPrice,
+      });
+    }
+
+    if (maxPrice) {
+      queryBuilder.andWhere('price <= :maxPrice', {
+        maxPrice,
+      });
     }
 
     const data = await this._findAll(queryBuilder, {

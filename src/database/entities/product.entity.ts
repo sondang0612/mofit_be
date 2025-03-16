@@ -11,6 +11,7 @@ import { BaseEntity } from './base.entity';
 import { Category } from './category.entity';
 import { Attribute } from './attribute.entity';
 import { Discount } from './discount.entity';
+import { Brand } from './brand.entity';
 
 @Entity(ETableName.PRODUCT)
 export class Product extends BaseEntity {
@@ -55,4 +56,7 @@ export class Product extends BaseEntity {
   })
   @JoinColumn({ name: 'discount_id' })
   discount: Discount;
+
+  @ManyToOne(() => Brand, (brand) => brand.products)
+  brand: Brand;
 }

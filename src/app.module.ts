@@ -18,6 +18,7 @@ import { PaymentsModule } from './modules/payments/payments.module';
 import { ProductsModule } from './modules/products/products.module';
 import { UsersModule } from './modules/users/users.module';
 import { DiscountsModule } from './modules/discounts/discounts.module';
+import { BrandsModule } from './modules/brands/brands.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { DiscountsModule } from './modules/discounts/discounts.module';
     PaymentsModule,
     JwtGlobalModule,
     DiscountsModule,
+    BrandsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: GlobalAuthGuard }],
 })

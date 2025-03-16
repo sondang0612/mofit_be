@@ -18,8 +18,15 @@ export class CategoriesService extends TypeOrmBaseService<Category> {
     return this._create(createCategoryDto);
   }
 
-  findAll() {
-    return `This action returns all categories`;
+  async findAll() {
+    const categories = await this.categoriesRepository.find({
+      where: { isDeleted: false },
+    });
+
+    return {
+      msg: 'Get list categories successfully!',
+      data: categories,
+    };
   }
 
   findOne(id: number) {

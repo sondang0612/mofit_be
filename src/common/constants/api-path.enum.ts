@@ -11,4 +11,5 @@ export enum EApiPathName {
   ORDER_ITEMS = `api/v1/order-items`,
   PAYMENT_TRANSACTION = `api/v1/payment-transaction`,
   DISCOUNT = `api/v1/discount`,
+  BRANDS = `api/v1/brands`,
 }
