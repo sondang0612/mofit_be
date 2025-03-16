@@ -36,9 +36,6 @@ export class Product extends BaseEntity {
   })
   ratings: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
-  finalPrice: number;
-
   @ManyToOne(() => Category, (category) => category.products)
   @JoinColumn({ name: 'category_id' })
   category: Category;

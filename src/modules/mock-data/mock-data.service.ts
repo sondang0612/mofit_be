@@ -99,10 +99,8 @@ export class MockDataService {
           ...(discount
             ? {
                 discount,
-                finalPrice:
-                  product.price - product.price * (discount.percentage / 100),
               }
-            : { finalPrice: product.price }),
+            : {}),
         };
       }),
     );
