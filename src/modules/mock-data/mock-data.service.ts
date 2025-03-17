@@ -44,7 +44,23 @@ export class MockDataService {
   }
 
   async importCategories() {
-    await this.categoriesService._createMany(categoriesData as any);
+    for (const item of categoriesData) {
+      const category = await this.categoriesService._create({
+        name: item.name,
+      });
+
+      if (item?.subCategories?.length > 0) {
+        const subCategories = await Promise.all(
+          item.subCategories.map(async (subItem) => {
+            return this.categoriesService._create({
+              name: subItem.name,
+              parentCategory: category,
+            });
+          }),
+        );
+        category.subCategories = subCategories;
+      }
+    }
   }
 
   async importAttributes() {

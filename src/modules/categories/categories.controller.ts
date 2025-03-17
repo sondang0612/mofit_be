@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { EApiPathName } from 'src/common/constants/api-path.enum';
+import { EAuth } from 'src/common/constants/auth.enum';
+import { Auth } from '../auth/guards/global-auth.guard';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { Auth } from '../auth/guards/global-auth.guard';
-import { EAuth } from 'src/common/constants/auth.enum';
 
 @Controller(EApiPathName.CATEGORIES)
 export class CategoriesController {
@@ -18,6 +18,12 @@ export class CategoriesController {
   @Auth(EAuth.NONE)
   findAll() {
     return this.categoriesService.findAll();
+  }
+
+  @Get('newest')
+  @Auth(EAuth.NONE)
+  findNewestCategories() {
+    return this.categoriesService.findNewestCategories();
   }
 
   @Get(':id')

@@ -78,9 +78,12 @@ export class ProductsService extends TypeOrmBaseService<Product> {
     }
 
     if (category) {
-      queryBuilder.andWhere('category.id = :category', {
-        category,
-      });
+      queryBuilder.andWhere(
+        '(category.id = :category OR category.parentCategoryId = :category)',
+        {
+          category,
+        },
+      );
     }
 
     if (Array.isArray(brands)) {

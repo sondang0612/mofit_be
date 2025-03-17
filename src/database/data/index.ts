@@ -2,13 +2,30 @@ import { ERole } from 'src/common/constants/role.enum';
 
 export const categoriesData = [
   {
-    name: 'Dresses',
+    name: 'Bóng bàn',
+    imgSrc: '/assets/images/categories/bong-ban.png',
+    subCategories: [{ name: 'Bóng' }, { name: 'Vợt' }, { name: 'Bàn' }],
   },
   {
-    name: 'Shoes',
+    name: 'Pickleball',
+    imgSrc: '/assets/images/categories/pickleball.png',
+    subCategories: [
+      {
+        name: 'Dòng chuyên nghiệp',
+        imgSrc: '/assets/images/categories/dong-chuyen-nghiep.png',
+      },
+      { name: 'Newbie', imgSrc: '/assets/images/categories/newbie.png' },
+      { name: 'Couple', imgSrc: '/assets/images/categories/couple.png' },
+    ],
   },
   {
-    name: 'Accessories',
+    name: 'Thời trang',
+    imgSrc: '/assets/images/categories/thoi-trang.png',
+    subCategories: [{ name: 'Áo' }, { name: 'Quần' }, { name: 'Khăn' }],
+  },
+  {
+    name: 'Phụ kiện thể thao',
+    imgSrc: '/assets/images/categories/phu-kien-the-thao.png',
   },
 ];
 
@@ -76,7 +93,7 @@ export const attributesData = [
 export const productsData = [
   {
     id: 233,
-    categoryName: 'Dresses',
+    categoryName: 'Vợt',
     brandName: 'Double Fish',
     attributeValues: ['new_arrivals', 'featured'],
     title: 'Cropped Faux Leather Jacket',
@@ -90,7 +107,7 @@ export const productsData = [
   },
   {
     id: 234,
-    categoryName: 'Dresses',
+    categoryName: 'Bóng',
     brandName: 'Double Fish',
     attributeValues: ['new_arrivals'],
     title: 'Calvin Shorts',
@@ -103,7 +120,7 @@ export const productsData = [
   },
   {
     id: 235,
-    categoryName: 'Dresses',
+    categoryName: 'Bàn',
     brandName: 'Double Fish',
     attributeValues: ['best_seller', 'featured'],
     title: 'Giordonal',
@@ -117,7 +134,7 @@ export const productsData = [
   },
   {
     id: 241,
-    categoryName: 'Dresses',
+    categoryName: 'Bóng',
     brandName: 'Double Fish',
     attributeValues: ['best_seller'],
     title: 'Fancies',
@@ -130,7 +147,7 @@ export const productsData = [
   },
   {
     id: 242,
-    categoryName: 'Dresses',
+    categoryName: 'Dòng chuyên nghiệp',
     brandName: 'Double Fish',
     attributeValues: ['top_rated', 'featured'],
     title: 'Jogarbola',
@@ -143,7 +160,7 @@ export const productsData = [
   },
   {
     id: 243,
-    categoryName: 'Dresses',
+    categoryName: 'Newbie',
     brandName: 'Double Fish',
     attributeValues: ['top_rated', 'featured'],
     title: 'Kirby T-Shirt',
@@ -156,7 +173,7 @@ export const productsData = [
   },
   {
     id: 244,
-    categoryName: 'Dresses',
+    categoryName: 'Newbie',
     brandName: 'Mofit',
     attributeValues: ['top_rated', 'featured'],
     title: 'Cableknit Shawl',
@@ -170,7 +187,7 @@ export const productsData = [
   },
   {
     id: 245,
-    categoryName: 'Dresses',
+    categoryName: 'Couple',
     brandName: 'Mofit',
     attributeValues: ['best_seller', 'featured'],
     title: 'Colorful Jacket',
@@ -184,7 +201,7 @@ export const productsData = [
   },
   {
     id: 301,
-    categoryName: 'Shoes',
+    categoryName: 'Couple',
     brandName: 'Double Fish',
     attributeValues: ['new_arrivals', 'featured'],
     title: 'Running Sneakers',
@@ -198,7 +215,7 @@ export const productsData = [
   },
   {
     id: 302,
-    categoryName: 'Shoes',
+    categoryName: 'Áo',
     brandName: 'Double Fish',
     attributeValues: ['best_seller'],
     title: 'Leather Loafers',
@@ -211,7 +228,7 @@ export const productsData = [
   },
   {
     id: 303,
-    categoryName: 'Shoes',
+    categoryName: 'Quần',
     brandName: 'Mofit',
     attributeValues: ['top_rated', 'featured'],
     title: 'High-Top Sneakers',
@@ -224,7 +241,7 @@ export const productsData = [
   },
   {
     id: 304,
-    categoryName: 'Shoes',
+    categoryName: 'Khăn',
     brandName: 'Double Fish',
     attributeValues: ['best_seller', 'featured'],
     title: 'Casual Canvas Shoes',
@@ -237,7 +254,7 @@ export const productsData = [
   },
   {
     id: 305,
-    categoryName: 'Shoes',
+    categoryName: 'Phụ kiện',
     brandName: 'Mofit',
     attributeValues: ['new_arrivals'],
     title: 'Formal Derby Shoes',
@@ -250,7 +267,7 @@ export const productsData = [
   },
   {
     id: 401,
-    categoryName: 'Accessories',
+    categoryName: 'Phụ kiện',
     brandName: 'Double Fish',
     attributeValues: ['top_rated'],
     title: 'Leather Wallet',
@@ -264,7 +281,7 @@ export const productsData = [
   },
   {
     id: 402,
-    categoryName: 'Accessories',
+    categoryName: 'Dòng chuyên nghiệp',
     brandName: 'Mofit',
     attributeValues: ['best_seller'],
     title: 'Classic Wristwatch',
@@ -277,7 +294,7 @@ export const productsData = [
   },
   {
     id: 403,
-    categoryName: 'Accessories',
+    categoryName: 'Newbie',
     brandName: 'Double Fish',
     attributeValues: ['new_arrivals', 'featured'],
     title: 'Stylish Sunglasses',
@@ -290,7 +307,7 @@ export const productsData = [
   },
   {
     id: 404,
-    categoryName: 'Accessories',
+    categoryName: 'Couple',
     brandName: 'Double Fish',
     attributeValues: ['best_seller'],
     title: 'Canvas Tote Bag',
@@ -303,7 +320,7 @@ export const productsData = [
   },
   {
     id: 405,
-    categoryName: 'Accessories',
+    categoryName: 'Bàn',
     brandName: 'Mofit',
     attributeValues: ['top_rated', 'featured'],
     title: 'Luxury Belt',
