@@ -47,6 +47,7 @@ export class MockDataService {
     for (const item of categoriesData) {
       const category = await this.categoriesService._create({
         name: item.name,
+        imgSrc: item?.imgSrc,
       });
 
       if (item?.subCategories?.length > 0) {
@@ -55,6 +56,7 @@ export class MockDataService {
             return this.categoriesService._create({
               name: subItem.name,
               parentCategory: category,
+              imgSrc: subItem?.imgSrc,
             });
           }),
         );

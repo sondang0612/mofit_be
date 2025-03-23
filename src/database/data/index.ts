@@ -93,29 +93,25 @@ export const attributesData = [
 export const productsData = [
   {
     id: 233,
-    categoryName: 'Vợt',
+    categoryName: 'Dòng chuyên nghiệp',
     brandName: 'Double Fish',
     attributeValues: ['new_arrivals', 'featured'],
-    title: 'Cropped Faux Leather Jacket',
-    price: 29,
-    imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
-    imgSrc2:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
+    title: 'Vợt Pickleball DFPK-1104',
+    price: 58000000,
+    imgSrc: '/assets/images/products/pickleball-DFPK-1104-min.png',
+    imgSrc2: '/assets/images/products/pickleball-DFPK-1104-min.png',
     ratings: 5,
     discountPercentage: 15,
   },
   {
     id: 234,
-    categoryName: 'Bóng',
+    categoryName: 'Dòng chuyên nghiệp',
     brandName: 'Double Fish',
     attributeValues: ['new_arrivals'],
-    title: 'Calvin Shorts',
-    price: 62,
-    imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
-    imgSrc2:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
+    title: 'Vợt Pickleball DFPK-6101',
+    price: 2100000,
+    imgSrc: '/assets/images/products/pickleball-DFPK-6101-min.png',
+    imgSrc2: '/assets/images/products/pickleball-DFPK-6101-min.png',
     ratings: 4.5,
   },
   {
@@ -123,39 +119,33 @@ export const productsData = [
     categoryName: 'Bàn',
     brandName: 'Double Fish',
     attributeValues: ['best_seller', 'featured'],
-    title: 'Giordonal',
-    price: 17,
-    imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
-    imgSrc2:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
+    title: 'Bàn Bóng Bàn Double Fish 233 WTT Limited Seagame 31',
+    price: 24800000,
+    imgSrc: '/assets/images/products/ban-bong-ban-double-fish-233.jpg',
+    imgSrc2: '/assets/images/products/ban-bong-ban-double-fish-233.jpg',
     ratings: 3,
     discountPercentage: 15,
   },
   {
     id: 241,
-    categoryName: 'Bóng',
+    categoryName: 'Vợt',
     brandName: 'Double Fish',
     attributeValues: ['best_seller'],
-    title: 'Fancies',
-    price: 29,
-    imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
-    imgSrc2:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
+    title: 'Vợt Bóng Bàn Double Fish 2A-C',
+    price: 280000,
+    imgSrc: '/assets/images/products/vot-bong-ban-double-fish-2ac.jpg',
+    imgSrc2: '/assets/images/products/vot-bong-ban-double-fish-2ac.jpg',
     ratings: 5,
   },
   {
     id: 242,
-    categoryName: 'Dòng chuyên nghiệp',
+    categoryName: 'Bàn',
     brandName: 'Double Fish',
     attributeValues: ['top_rated', 'featured'],
-    title: 'Jogarbola',
-    price: 62,
-    imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
-    imgSrc2:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
+    title: 'Bàn Bóng Bàn Double Fish DF 201C',
+    price: 8990000,
+    imgSrc: '/assets/images/products/ban-bong-ban-double-fish-201c.jpg',
+    imgSrc2: '/assets/images/products/ban-bong-ban-double-fish-201c.jpg',
     ratings: 3,
   },
   {
@@ -163,12 +153,10 @@ export const productsData = [
     categoryName: 'Newbie',
     brandName: 'Double Fish',
     attributeValues: ['top_rated', 'featured'],
-    title: 'Kirby T-Shirt',
-    price: 17,
-    imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
-    imgSrc2:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
+    title: 'Vợt Pickleball DFPK-3101',
+    price: 1390000,
+    imgSrc: '/assets/images/products/DFPK-3106-min.png',
+    imgSrc2: '/assets/images/products/DFPK-3106-min.png',
     ratings: 2,
   },
   {
@@ -176,12 +164,10 @@ export const productsData = [
     categoryName: 'Newbie',
     brandName: 'Mofit',
     attributeValues: ['top_rated', 'featured'],
-    title: 'Cableknit Shawl',
-    price: 99,
-    imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
-    imgSrc2:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
+    title: 'Vợt Pickleball DFPK-3105',
+    price: 1290000,
+    imgSrc: '/assets/images/products/DFPK-3105-min.png',
+    imgSrc2: '/assets/images/products/DFPK-3105-min.png',
     ratings: 3.5,
     discountPercentage: 10,
   },
@@ -190,145 +176,22 @@ export const productsData = [
     categoryName: 'Couple',
     brandName: 'Mofit',
     attributeValues: ['best_seller', 'featured'],
-    title: 'Colorful Jacket',
-    price: 29,
-    imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
-    imgSrc2:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
+    title: 'Vợt Couple Pickleball DFPK-3102',
+    price: 1190000,
+    imgSrc: '/assets/images/products/DFPK-3102.jpg',
+    imgSrc2: '/assets/images/products/DFPK-3102.jpg',
     ratings: 4.25,
     discountPercentage: 15,
-  },
-  {
-    id: 301,
-    categoryName: 'Couple',
-    brandName: 'Double Fish',
-    attributeValues: ['new_arrivals', 'featured'],
-    title: 'Running Sneakers',
-    price: 75,
-    imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
-    imgSrc2:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
-    ratings: 4.8,
-    discountPercentage: 10,
-  },
-  {
-    id: 302,
-    categoryName: 'Áo',
-    brandName: 'Double Fish',
-    attributeValues: ['best_seller'],
-    title: 'Leather Loafers',
-    price: 120,
-    imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
-    imgSrc2:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
-    ratings: 4.6,
-  },
-  {
-    id: 303,
-    categoryName: 'Quần',
-    brandName: 'Mofit',
-    attributeValues: ['top_rated', 'featured'],
-    title: 'High-Top Sneakers',
-    price: 90,
-    imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
-    imgSrc2:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
-    ratings: 4.2,
-  },
-  {
-    id: 304,
-    categoryName: 'Khăn',
-    brandName: 'Double Fish',
-    attributeValues: ['best_seller', 'featured'],
-    title: 'Casual Canvas Shoes',
-    price: 55,
-    imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
-    imgSrc2:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
-    ratings: 4.0,
   },
   {
     id: 305,
     categoryName: 'Phụ kiện',
     brandName: 'Mofit',
     attributeValues: ['new_arrivals'],
-    title: 'Formal Derby Shoes',
-    price: 140,
-    imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
-    imgSrc2:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
+    title: 'Đai Massage bụng MOFIT 2016',
+    price: 1190000,
+    imgSrc: '/assets/images/products/dai-massage-bung.jpg',
+    imgSrc2: '/assets/images/products/dai-massage-bung.jpg',
     ratings: 4.9,
-  },
-  {
-    id: 401,
-    categoryName: 'Phụ kiện',
-    brandName: 'Double Fish',
-    attributeValues: ['top_rated'],
-    title: 'Leather Wallet',
-    price: 50,
-    imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
-    imgSrc2:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
-    ratings: 4.7,
-    discountPercentage: 5,
-  },
-  {
-    id: 402,
-    categoryName: 'Dòng chuyên nghiệp',
-    brandName: 'Mofit',
-    attributeValues: ['best_seller'],
-    title: 'Classic Wristwatch',
-    price: 200,
-    imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
-    imgSrc2:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
-    ratings: 5.0,
-  },
-  {
-    id: 403,
-    categoryName: 'Newbie',
-    brandName: 'Double Fish',
-    attributeValues: ['new_arrivals', 'featured'],
-    title: 'Stylish Sunglasses',
-    price: 80,
-    imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
-    imgSrc2:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
-    ratings: 4.3,
-  },
-  {
-    id: 404,
-    categoryName: 'Couple',
-    brandName: 'Double Fish',
-    attributeValues: ['best_seller'],
-    title: 'Canvas Tote Bag',
-    price: 35,
-    imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
-    imgSrc2:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
-    ratings: 4.1,
-  },
-  {
-    id: 405,
-    categoryName: 'Bàn',
-    brandName: 'Mofit',
-    attributeValues: ['top_rated', 'featured'],
-    title: 'Luxury Belt',
-    price: 100,
-    imgSrc:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1.jpg&w=750&q=75',
-    imgSrc2:
-      'https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fproducts%2Fproduct_1-1.jpg&w=750&q=75',
-    ratings: 4.5,
   },
 ];

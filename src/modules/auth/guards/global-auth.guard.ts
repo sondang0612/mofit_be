@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   CanActivate,
   ExecutionContext,
   Injectable,
@@ -40,7 +39,7 @@ export class GlobalAuthGuard implements CanActivate {
     const token = extractTokenFromHeader(request);
 
     if (!token) {
-      throw new BadRequestException('Missing jwt token');
+      throw new UnauthorizedException('Missing jwt token');
     }
 
     let user;

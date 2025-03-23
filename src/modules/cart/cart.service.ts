@@ -15,7 +15,7 @@ export class CartService {
 
     const cartItems = await this.cartItemsService.repository.find({
       where: { user: { id: userId, isDeleted: false }, isDeleted: false },
-      relations: ['product'],
+      relations: ['product', 'product.category'],
     });
 
     return {
