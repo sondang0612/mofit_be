@@ -28,26 +28,30 @@ export class AuthService {
   }
 
   async register(createAuthDto: RegisterAuthDto) {
-    const { email, password, phoneNumber, username } = createAuthDto;
+    const { email, password, username, phoneNumber } = createAuthDto;
 
-    const existingUser = await this.usersService._findOne({
-      where: [{ email }, { phoneNumber }, { username }],
+    const existingUser = await this.usersService.repository.findOne({
+      where: [
+        { email, isDeleted: false },
+        { username, isDeleted: false },
+        { phoneNumber, isDeleted: false },
+      ],
     });
 
     if (existingUser) {
-      throw new BadRequestException(
-        'Email, phone number, or username already exists',
-      );
+      throw new BadRequestException('Tài khoản đã tồn tại');
     }
     const hashedPassword = await hashPassword(password);
 
-    const newUser = await this.usersService.repository.create({
+    const newUser = await this.usersService._create({
       ...createAuthDto,
       password: hashedPassword,
     });
 
     return {
       access_token: this.generateToken(newUser),
+      fullName: `${newUser?.lastName} ${newUser?.firstName}`,
+      role: newUser?.role,
       message: 'Register successful',
     };
   }

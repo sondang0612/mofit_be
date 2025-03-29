@@ -4,9 +4,11 @@ import { ETableName } from 'src/common/constants/table-name.enum';
 import { Order } from 'src/database/entities/order.entity';
 import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
 import { DataSource, In, Repository } from 'typeorm';
-import { OrderPaginationDto } from './dto/address-pagination.dto';
+import { OrderPaginationDto } from './dto/order-pagination.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserParams } from 'src/common/decorators/user.decorator';
+import { ERole } from 'src/common/constants/role.enum';
 
 @Injectable()
 export class OrdersService extends TypeOrmBaseService<Order> {
@@ -139,16 +141,19 @@ export class OrdersService extends TypeOrmBaseService<Order> {
     }
   }
 
-  async findAll(args: OrderPaginationDto & { userId: number }) {
-    const { limit, page, sortBy, sort, userId } = args;
+  async findAll(user: UserParams, args: OrderPaginationDto) {
+    const { limit, page, sortBy, sort } = args;
 
     const queryBuilder = this.ordersRepository
       .createQueryBuilder(this.entityName)
       .leftJoinAndSelect(`${this.entityName}.user`, 'user')
-      .leftJoinAndSelect(`${this.entityName}.orderItems`, 'orderItems')
-      .where(`${this.entityName}.userId = :userId`, {
-        userId,
+      .leftJoinAndSelect(`${this.entityName}.orderItems`, 'orderItems');
+
+    if (user?.role === ERole.USER) {
+      queryBuilder.where(`${this.entityName}.userId = :userId`, {
+        userId: user?.id,
       });
+    }
 
     const data = await this._findAll(queryBuilder, {
       limit,

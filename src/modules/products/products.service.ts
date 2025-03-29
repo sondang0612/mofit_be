@@ -7,6 +7,7 @@ import { CategoriesService } from '../categories/categories.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductPaginationDto } from './dto/product-pagination.dto';
 import { SortOrder } from 'src/common/dtos/pagination.dto';
+import { instanceToInstance } from 'class-transformer';
 @Injectable()
 export class ProductsService extends TypeOrmBaseService<Product> {
   constructor(
@@ -117,7 +118,14 @@ export class ProductsService extends TypeOrmBaseService<Product> {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: number) {
+    const product = await this._findOne({
+      where: { id },
+      relations: ['category', 'attributes', 'discount', 'brand'],
+    });
+    return {
+      data: instanceToInstance(product),
+      message: 'Get product successfully!',
+    };
   }
 }

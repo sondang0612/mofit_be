@@ -24,6 +24,7 @@ export class ProductsController {
   }
 
   @Get(':id')
+  @Auth(EAuth.NONE)
   findOne(@Param('id') id: string) {
     return this.productsService.findOne(+id);
   }

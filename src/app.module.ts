@@ -19,6 +19,7 @@ import { ProductsModule } from './modules/products/products.module';
 import { UsersModule } from './modules/users/users.module';
 import { DiscountsModule } from './modules/discounts/discounts.module';
 import { BrandsModule } from './modules/brands/brands.module';
+import { ContactsModule } from './modules/contacts/contacts.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { BrandsModule } from './modules/brands/brands.module';
     JwtGlobalModule,
     DiscountsModule,
     BrandsModule,
+    ContactsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: GlobalAuthGuard }],
 })

@@ -27,6 +27,15 @@ export class Product extends BaseEntity {
   @Column({ type: 'varchar', length: 255, nullable: true })
   imgSrc2: string;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  shortDescription: string;
+
+  @Column({ type: 'text', nullable: true })
+  description: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  sku: string;
+
   @Column({
     nullable: true,
     type: 'decimal',

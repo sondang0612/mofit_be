@@ -1,4 +1,4 @@
-import { IsEnum, IsString } from 'class-validator';
+import { IsEnum, IsString, MinLength } from 'class-validator';
 import { ERole } from 'src/common/constants/role.enum';
 
 export class LoginAuthDto {
@@ -6,7 +6,7 @@ export class LoginAuthDto {
   username: string;
 
   @IsString()
-  //@MinLength(6)
+  @MinLength(6)
   password: string;
 
   @IsEnum(ERole)

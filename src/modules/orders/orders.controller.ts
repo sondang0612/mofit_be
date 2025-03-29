@@ -12,7 +12,7 @@ import { EApiPathName } from 'src/common/constants/api-path.enum';
 import { ERole } from 'src/common/constants/role.enum';
 import { GetUser, UserParams } from 'src/common/decorators/user.decorator';
 import { Permissions } from '../auth/guards/global-auth.guard';
-import { OrderPaginationDto } from './dto/address-pagination.dto';
+import { OrderPaginationDto } from './dto/order-pagination.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { OrdersService } from './orders.service';
@@ -22,15 +22,12 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Get()
-  @Permissions(ERole.USER)
+  @Permissions(ERole.USER, ERole.ADMIN)
   findAll(
     @GetUser() user: UserParams,
     @Query() orderPaginationDto: OrderPaginationDto,
   ) {
-    return this.ordersService.findAll({
-      ...orderPaginationDto,
-      userId: user?.id,
-    });
+    return this.ordersService.findAll(user, orderPaginationDto);
   }
 
   @Get(':id')
