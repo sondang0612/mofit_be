@@ -22,4 +22,8 @@ export class ProductPaginationDto extends PaginationDto {
   @IsOptional()
   @IsString()
   maxPrice?: string;
+
+  @IsOptional()
+  @IsString()
+  searchQuery?: string;
 }

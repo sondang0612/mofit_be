@@ -43,6 +43,7 @@ export class ProductsService extends TypeOrmBaseService<Product> {
       brands,
       minPrice,
       maxPrice,
+      searchQuery,
     } = paginationDto;
     let { sortBy, sort } = paginationDto;
 
@@ -85,6 +86,12 @@ export class ProductsService extends TypeOrmBaseService<Product> {
           category,
         },
       );
+    }
+
+    if (searchQuery) {
+      queryBuilder.andWhere('(LOWER(title) LIKE LOWER(:searchQuery))', {
+        searchQuery: `%${searchQuery}%`,
+      });
     }
 
     if (Array.isArray(brands)) {
