@@ -23,7 +23,7 @@ import { ContactsModule } from './modules/contacts/contacts.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env.local' }),
     DatabaseModule,
     ProductsModule,
     CategoriesModule,
