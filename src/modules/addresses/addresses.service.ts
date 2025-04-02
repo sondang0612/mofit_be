@@ -66,16 +66,20 @@ export class AddressesService extends TypeOrmBaseService<Address> {
     };
   }
 
-  async findAll(args: AddressPaginationDto & { userId: number }) {
+  async findAll(args: AddressPaginationDto) {
     const { limit, page, sortBy, sort, userId } = args;
 
     const queryBuilder = this.addressesRepository
       .createQueryBuilder(this.entityName)
-      .leftJoinAndSelect(`${this.entityName}.user`, 'user')
-      .where(`${this.entityName}.userId = :userId`, {
+      .leftJoinAndSelect(`${this.entityName}.user`, 'user');
+
+    if (userId) {
+      queryBuilder.where(`${this.entityName}.userId = :userId`, {
         userId,
-      })
-      .orderBy(`${this.entityName}.isDefault`, 'DESC');
+      });
+    }
+
+    queryBuilder.orderBy(`${this.entityName}.isDefault`, 'DESC');
 
     const data = await this._findAll(queryBuilder, {
       limit,

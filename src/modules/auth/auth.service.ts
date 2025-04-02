@@ -24,6 +24,7 @@ export class AuthService {
       id: payload.id,
       email: payload.email,
       role: payload.role,
+      fullName: `${payload.firstName} ${payload.lastName}`,
     });
   }
 

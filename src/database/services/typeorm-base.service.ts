@@ -1,4 +1,4 @@
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { instanceToInstance } from 'class-transformer';
 import { EDefaultEmail } from 'src/common/constants/default-email.enum';
 import { SortOrder } from 'src/common/dtos/pagination.dto';
@@ -12,6 +12,9 @@ import {
   SelectQueryBuilder,
 } from 'typeorm';
 import { BaseEntity } from '../entities/base.entity';
+import { UserParams } from 'src/common/decorators/user.decorator';
+import { User } from '../entities/user.entity';
+import { ERole } from 'src/common/constants/role.enum';
 
 type CreateEntityOpts = Partial<{
   userEmail?: string;
@@ -148,5 +151,11 @@ export class TypeOrmBaseService<TEntity extends BaseEntity> {
       .set(updateData as any)
       .where('id IN (:...ids)', { ids })
       .execute();
+  }
+
+  _checkAccess(user: UserParams, eUser: User) {
+    if (user.role === ERole.USER && user.id !== eUser.id) {
+      throw new UnauthorizedException('You cannot access');
+    }
   }
 }

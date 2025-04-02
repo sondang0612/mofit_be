@@ -43,6 +43,7 @@ export class GlobalAuthGuard implements CanActivate {
     }
 
     let user;
+    const userId = request?.query?.userId;
 
     try {
       user = await this.jwtService.verifyAsync(token, {
@@ -60,8 +61,18 @@ export class GlobalAuthGuard implements CanActivate {
     if (!requiredRoles || requiredRoles.length === 0) {
       return true;
     }
+
+    if (user?.role === ERole.USER && userId && +userId !== +user?.id) {
+      throw new UnauthorizedException('You cannot access');
+    }
+
     Object.assign(request, {
-      user: { id: user?.id, role: user?.role, email: user?.email },
+      user: {
+        id: user?.id,
+        role: user?.role,
+        email: user?.email,
+        fullName: user?.fullName,
+      },
     });
 
     return requiredRoles.some((role) => user?.role?.includes(role));

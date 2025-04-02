@@ -36,15 +36,11 @@ export class AddressesController {
   }
 
   @Get()
-  @Permissions(ERole.USER)
-  findAll(
-    @GetUser() user: UserParams,
-    @Query() addressPaginationDto: AddressPaginationDto,
-  ) {
+  @Permissions(ERole.USER, ERole.ADMIN)
+  findAll(@Query() addressPaginationDto: AddressPaginationDto) {
     return this.addressesService.findAll({
       ...addressPaginationDto,
       limit: 50,
-      userId: user?.id,
     });
   }
 

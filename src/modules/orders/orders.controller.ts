@@ -22,28 +22,19 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Get()
-  @Permissions(ERole.ADMIN)
+  @Permissions(ERole.ADMIN, ERole.USER)
   findAll(@Query() orderPaginationDto: OrderPaginationDto) {
     return this.ordersService.findAll(orderPaginationDto);
   }
 
-  @Get('me')
-  @Permissions(ERole.USER, ERole.ADMIN)
-  findMyOrder(
-    @GetUser() user: UserParams,
-    @Query() orderPaginationDto: OrderPaginationDto,
-  ) {
-    return this.ordersService.findAll(orderPaginationDto, user);
-  }
-
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ordersService.findOne(+id);
+  findOne(@GetUser() user: UserParams, @Param('id') id: string) {
+    return this.ordersService.findOne(+id, user);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.ordersService.update(+id, updateOrderDto);
+    return this.ordersService.update();
   }
 
   @Delete(':id')
@@ -54,10 +45,6 @@ export class OrdersController {
   @Post()
   @Permissions(ERole.USER)
   create(@GetUser() user: UserParams, @Body() createOrderDto: CreateOrderDto) {
-    return this.ordersService.create({
-      ...createOrderDto,
-      userId: user?.id,
-      userEmail: user?.email,
-    });
+    return this.ordersService.create(user, createOrderDto);
   }
 }

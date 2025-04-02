@@ -44,11 +44,17 @@ export class Order extends BaseEntity {
   totalPrice: number;
 
   @Column({ type: 'enum', enum: EOrderStatus, default: EOrderStatus.PENDING })
-  orderStatus: EOrderStatus;
+  status: EOrderStatus;
 
   @Column({ type: 'jsonb' })
   address: Record<string, any>;
 
   @OneToOne(() => Payment, (payment) => payment.order)
   payment: Payment;
+
+  @Column({ unique: true })
+  txnRef: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  cart: Record<string, any>;
 }

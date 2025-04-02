@@ -1,4 +1,5 @@
 export enum EOrderStatus {
+  DRAFT = 'draft',
   PENDING = 'pending',
   PROCESSING = 'processing',
   SHIPPED = 'shipped',
@@ -14,4 +15,13 @@ export enum EShippingMethod {
 export enum EPaymentMethod {
   COD = 'cod',
   PAYMENT_GATEWAY = 'payment_gateway',
+}
+
+export enum EPaymentStatus {
+  PENDING = 'pending',
+  PROCESSING = 'processing',
+  COMPLETED = 'completed',
+  FAILED = 'failed',
+  REFUNDING = 'refunding',
+  REFUNDED = 'refunded',
 }

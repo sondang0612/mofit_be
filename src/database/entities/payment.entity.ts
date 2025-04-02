@@ -3,6 +3,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { User } from './user.entity';
 import { Order } from './order.entity';
+import { EPaymentStatus } from 'src/common/constants/order.enum';
 
 @Entity(ETableName.PAYMENT)
 export class Payment extends BaseEntity {
@@ -12,16 +13,17 @@ export class Payment extends BaseEntity {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   totalPrice: number;
 
-  @Column({ nullable: true })
-  bank: string;
-
-  @Column({ nullable: true })
-  cardType: string;
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  transactionId: string;
+  @Column({
+    type: 'enum',
+    enum: EPaymentStatus,
+    default: EPaymentStatus.PENDING,
+  })
+  status: EPaymentStatus;
 
   @OneToOne(() => Order)
   @JoinColumn()
   order: Order;
+
+  @Column({ type: 'jsonb', nullable: true })
+  details: Record<string, any>;
 }

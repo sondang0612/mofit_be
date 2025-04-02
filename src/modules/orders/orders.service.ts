@@ -1,41 +1,33 @@
-import { Injectable } from '@nestjs/common';
-import { EPaymentMethod } from 'src/common/constants/order.enum';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import * as dayjs from 'dayjs';
+import {
+  EOrderStatus,
+  EPaymentMethod,
+  EPaymentStatus,
+} from 'src/common/constants/order.enum';
 import { ETableName } from 'src/common/constants/table-name.enum';
+import { UserParams } from 'src/common/decorators/user.decorator';
 import { Order } from 'src/database/entities/order.entity';
 import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
 import { DataSource, In, Repository } from 'typeorm';
+import { PaymentsService } from '../payments/payments.service';
+import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderPaginationDto } from './dto/order-pagination.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { UserParams } from 'src/common/decorators/user.decorator';
-import { ERole } from 'src/common/constants/role.enum';
 
 @Injectable()
 export class OrdersService extends TypeOrmBaseService<Order> {
   constructor(
     @InjectRepository(Order)
     private readonly ordersRepository: Repository<Order>,
+    @Inject(forwardRef(() => PaymentsService))
+    private readonly paymentsService: PaymentsService,
     private readonly dataSource: DataSource,
   ) {
     super(ordersRepository);
   }
 
-  async create(args: {
-    cartItemIds: number[];
-    shippingMethod: string;
-    shippingPrice: number;
-    paymentMethod: EPaymentMethod;
-    discount: number;
-    vat: number;
-    subTotal: number;
-    totalPrice: number;
-    userId: number;
-    userEmail: string;
-    addressId: number;
-    bank?: string;
-    cardType?: string;
-    transactionId?: string;
-  }) {
+  async create(user: UserParams, createOrderDto: CreateOrderDto) {
     const {
       discount,
       paymentMethod,
@@ -43,17 +35,12 @@ export class OrdersService extends TypeOrmBaseService<Order> {
       shippingPrice,
       subTotal,
       totalPrice,
-      userEmail,
-      userId,
       vat,
       addressId,
       cartItemIds,
-      bank,
-      cardType,
-      transactionId,
-    } = args;
+    } = createOrderDto;
 
-    const user = { id: userId, email: userEmail };
+    const txnRef = dayjs().format('HHmmss');
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -64,13 +51,13 @@ export class OrdersService extends TypeOrmBaseService<Order> {
         queryRunner.manager.find(ETableName.CART_ITEM, {
           where: {
             id: In(cartItemIds),
-            user,
+            user: { id: user.id },
             isDeleted: false,
           },
           relations: ['product'],
         }) as any,
         queryRunner.manager.findOneOrFail(ETableName.ADDRESS, {
-          where: { id: addressId, user },
+          where: { id: addressId, user: { id: user.id } },
         }),
       ]);
       const order = (await queryRunner.manager.save(
@@ -83,8 +70,14 @@ export class OrdersService extends TypeOrmBaseService<Order> {
           shippingPrice,
           subTotal,
           totalPrice,
-          user: { id: userId },
-          createdBy: userEmail,
+          user: { id: user.id },
+          createdBy: user.email,
+          txnRef,
+          cart: { ...cartItems },
+          status:
+            paymentMethod === EPaymentMethod.COD
+              ? EOrderStatus.PENDING
+              : EOrderStatus.DRAFT,
         } as any),
       )) as any;
 
@@ -100,17 +93,19 @@ export class OrdersService extends TypeOrmBaseService<Order> {
                 product: item.product,
                 quantity: item.quantity,
                 price: item.product.price,
-                createdBy: userEmail,
+                createdBy: user.email,
               }) as any,
           ),
         )
         .execute();
 
-      await queryRunner.manager.update(
-        ETableName.CART_ITEM,
-        { user: { id: userId }, id: In(cartItemIds), isDeleted: false },
-        { isDeleted: true },
-      );
+      if (paymentMethod === EPaymentMethod.COD) {
+        await queryRunner.manager.update(
+          ETableName.CART_ITEM,
+          { user: { id: user.id }, id: In(cartItemIds), isDeleted: false },
+          { isDeleted: true },
+        );
+      }
 
       await queryRunner.manager
         .createQueryBuilder()
@@ -118,40 +113,63 @@ export class OrdersService extends TypeOrmBaseService<Order> {
         .into(ETableName.PAYMENT)
         .values({
           order: { id: order.id },
-          user: { id: userId },
+          user: { id: user.id },
           totalPrice,
-          transactionId: transactionId || `COD-${order.id}-${Date.now()}`,
-          createdBy: userEmail,
-          bank,
-          cardType,
+          transactionId:
+            paymentMethod === EPaymentMethod.COD
+              ? `${order.id}${Date.now()}`
+              : null,
+          createdBy: user.email,
+          bank: null,
+          cardType: null,
+          status: EPaymentStatus.PENDING,
         })
         .execute();
 
       await queryRunner.commitTransaction();
 
-      return {
+      const res = {
         msg: 'Create order successfully',
         data: { ...order, orderItems: cartItems },
       };
+
+      if (paymentMethod === EPaymentMethod.PAYMENT_GATEWAY) {
+        const redirectUrl = await this.paymentsService.generateUrl({
+          txnRef,
+          ipAddress: user.ip,
+          orderInfo: `${user?.fullName} chuyển khoản ${totalPrice} cho đơn hàng #${order?.id}`,
+          totalPrice,
+        });
+        return { ...res, redirectUrl };
+      }
+      return res;
     } catch (error) {
-      await queryRunner.rollbackTransaction();
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
       throw new Error(`Failed to create order: ${error.message}`);
     } finally {
       await queryRunner.release();
     }
   }
 
-  async findAll(args: OrderPaginationDto, user?: UserParams) {
-    const { limit, page, sortBy, sort } = args;
+  async findAll(args: OrderPaginationDto) {
+    const { limit, page, sortBy, sort, txnRef, userId } = args;
 
     const queryBuilder = this.ordersRepository
       .createQueryBuilder(this.entityName)
       .leftJoinAndSelect(`${this.entityName}.user`, 'user')
       .leftJoinAndSelect(`${this.entityName}.orderItems`, 'orderItems');
 
-    if (user?.id) {
-      queryBuilder.where(`${this.entityName}.userId = :userId`, {
-        userId: user?.id,
+    if (userId) {
+      queryBuilder.andWhere(`${this.entityName}.userId = :userId`, {
+        userId,
+      });
+    }
+
+    if (txnRef) {
+      queryBuilder.andWhere(`${this.entityName}.txnRef = :txnRef`, {
+        txnRef,
       });
     }
 
@@ -170,12 +188,22 @@ export class OrdersService extends TypeOrmBaseService<Order> {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
+  async findOne(id: number, user: UserParams) {
+    const order = await this._findOneOrFail({
+      where: { id },
+      relations: ['user'],
+    });
+
+    this._checkAccess(user, order.user);
+
+    return {
+      data: order,
+      message: 'Get Order Successfull!!',
+    };
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
+  update() {
+    return `This action updates a order`;
   }
 
   remove(id: number) {
