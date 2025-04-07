@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { EApiPathName } from 'src/common/constants/api-path.enum';
 import { ERole } from 'src/common/constants/role.enum';
-import { GetUser, UserParams } from 'src/common/decorators/user.decorator';
+import { ExtractUser, UserParams } from 'src/common/decorators/user.decorator';
 import { Permissions } from '../auth/guards/global-auth.guard';
 import { AddressesService } from './addresses.service';
 import { AddressPaginationDto } from './dto/address-pagination.dto';
@@ -25,7 +25,7 @@ export class AddressesController {
   @Post()
   @Permissions(ERole.USER)
   create(
-    @GetUser() user: UserParams,
+    @ExtractUser() user: UserParams,
     @Body() createAddressDto: CreateAddressDto,
   ) {
     return this.addressesService.create({
@@ -36,25 +36,25 @@ export class AddressesController {
   }
 
   @Get()
-  @Permissions(ERole.USER, ERole.ADMIN)
-  findAll(@Query() addressPaginationDto: AddressPaginationDto) {
-    return this.addressesService.findAll({
-      ...addressPaginationDto,
-      limit: 50,
-    });
+  @Permissions(ERole.ADMIN, ERole.USER)
+  findAll(
+    @ExtractUser() user: UserParams,
+    @Query() addressPaginationDto: AddressPaginationDto,
+  ) {
+    return this.addressesService.findAll(addressPaginationDto, user);
   }
 
   @Delete('/:id')
   @Permissions(ERole.USER)
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@GetUser() user: UserParams, @Param('id') id: number) {
+  remove(@ExtractUser() user: UserParams, @Param('id') id: number) {
     return this.addressesService.deleteMyAddress(id, user?.id, user?.email);
   }
 
   @Patch('/:addressId/default')
   @Permissions(ERole.USER)
   setDefaultAddress(
-    @GetUser() user: UserParams,
+    @ExtractUser() user: UserParams,
     @Param('addressId') addressId: number,
   ) {
     return this.addressesService.setDefaultAddress({

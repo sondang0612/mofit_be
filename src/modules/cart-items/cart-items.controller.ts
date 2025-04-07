@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { EApiPathName } from 'src/common/constants/api-path.enum';
 import { ERole } from 'src/common/constants/role.enum';
-import { GetUser, UserParams } from 'src/common/decorators/user.decorator';
+import { ExtractUser, UserParams } from 'src/common/decorators/user.decorator';
 import { Permissions } from '../auth/guards/global-auth.guard';
 import { CartItemsService } from './cart-items.service';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
@@ -20,7 +20,10 @@ export class CartItemsController {
 
   @Post()
   @Permissions(ERole.USER)
-  create(@GetUser() user: UserParams, @Body() addToCartDto: CreateCartItemDto) {
+  create(
+    @ExtractUser() user: UserParams,
+    @Body() addToCartDto: CreateCartItemDto,
+  ) {
     return this.cartItemsService.create({
       ...addToCartDto,
       userId: user?.id,
@@ -31,7 +34,7 @@ export class CartItemsController {
   @Delete('/:id')
   @Permissions(ERole.USER)
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@GetUser() user: UserParams, @Param('id') id: number) {
+  remove(@ExtractUser() user: UserParams, @Param('id') id: number) {
     return this.cartItemsService.remove({
       userId: user?.id,
       userEmail: user?.email,

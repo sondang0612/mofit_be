@@ -10,15 +10,17 @@ export type UserParams = {
   fullName: string;
 };
 
-export const GetUser = createParamDecorator((_, context: ExecutionContext) => {
-  const request = context.switchToHttp().getRequest();
-  const result: UserParams = request?.user || {};
+export const ExtractUser = createParamDecorator(
+  (_, context: ExecutionContext) => {
+    const request = context.switchToHttp().getRequest();
+    const result: UserParams = request?.user || {};
 
-  result.ip =
-    request.ip ||
-    request.connection?.remoteAddress ||
-    request.headers['x-forwarded-for']?.split(',')[0] ||
-    '';
+    result.ip =
+      request.ip ||
+      request.connection?.remoteAddress ||
+      request.headers['x-forwarded-for']?.split(',')[0] ||
+      '';
 
-  return result;
-});
+    return result;
+  },
+);

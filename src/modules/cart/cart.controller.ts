@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { EApiPathName } from 'src/common/constants/api-path.enum';
 import { ERole } from 'src/common/constants/role.enum';
-import { GetUser, UserParams } from 'src/common/decorators/user.decorator';
+import { ExtractUser, UserParams } from 'src/common/decorators/user.decorator';
 import { Permissions } from '../auth/guards/global-auth.guard';
 import { CartService } from './cart.service';
 
@@ -11,7 +11,7 @@ export class CartController {
 
   @Get()
   @Permissions(ERole.USER)
-  findOne(@GetUser() user: UserParams) {
+  findOne(@ExtractUser() user: UserParams) {
     return this.cartService.getMyCart({ userId: user?.id });
   }
 }

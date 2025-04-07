@@ -1,9 +1,15 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Address } from 'src/database/entities/address.entity';
 import { AddressPaginationDto } from './dto/address-pagination.dto';
 import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserParams } from 'src/common/decorators/user.decorator';
+import { ERole } from 'src/common/constants/role.enum';
 
 @Injectable()
 export class AddressesService extends TypeOrmBaseService<Address> {
@@ -66,7 +72,19 @@ export class AddressesService extends TypeOrmBaseService<Address> {
     };
   }
 
-  async findAll(args: AddressPaginationDto) {
+  async findAll(args: AddressPaginationDto, user: UserParams) {
+    if (user.role === ERole.USER) {
+      return this.findAllWithPagination({ ...args, userId: `${user.id}` });
+    }
+
+    if (user.role === ERole.ADMIN) {
+      return this.findAllWithPagination(args);
+    }
+
+    throw new NotFoundException('Address not found');
+  }
+
+  async findAllWithPagination(args: AddressPaginationDto) {
     const { limit, page, sortBy, sort, userId } = args;
 
     const queryBuilder = this.addressesRepository

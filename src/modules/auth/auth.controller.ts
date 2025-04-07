@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Put } from '@nestjs/common';
 import { EApiPathName } from 'src/common/constants/api-path.enum';
 import { EAuth } from 'src/common/constants/auth.enum';
 import { ERole } from 'src/common/constants/role.enum';
-import { GetUser, UserParams } from 'src/common/decorators/user.decorator';
+import { ExtractUser, UserParams } from 'src/common/decorators/user.decorator';
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
@@ -27,14 +27,14 @@ export class AuthController {
 
   @Get('profile')
   @Permissions(ERole.ADMIN, ERole.USER)
-  profile(@GetUser() user: UserParams) {
+  profile(@ExtractUser() user: UserParams) {
     return this.authService.getProfile(user);
   }
 
   @Put('update-profile')
   @Permissions(ERole.ADMIN, ERole.USER)
   updateProfile(
-    @GetUser() user: UserParams,
+    @ExtractUser() user: UserParams,
     @Body() updateProfileDto: UpdateProfileDto,
   ) {
     return this.authService.updateProfile({
