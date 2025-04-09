@@ -67,11 +67,11 @@ export class ProductsService extends TypeOrmBaseService<Product> {
         });
         break;
       case 'price_desc':
-        sortBy = 'finalPrice';
+        sortBy = 'price';
         sort = SortOrder.DESC;
         break;
       case 'price_asc':
-        sortBy = 'finalPrice';
+        sortBy = 'price';
         sort = SortOrder.ASC;
         break;
 
@@ -125,9 +125,9 @@ export class ProductsService extends TypeOrmBaseService<Product> {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(slug: string) {
     const product = await this._findOne({
-      where: { id },
+      where: { slug },
       relations: ['category', 'attributes', 'discount', 'brand'],
     });
     return {

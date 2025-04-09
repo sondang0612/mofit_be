@@ -18,7 +18,7 @@ import {
   VNPAY_RESPONSE,
   VnpayResponseCodeDescription,
 } from 'src/common/constants/vnpay.enum';
-import { sortObject } from 'src/common/utils/sortObject';
+import { sortObject } from 'src/common/utils/sort-object';
 import { Payment } from 'src/database/entities/payment.entity';
 import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
 import { DataSource, In, Repository } from 'typeorm';

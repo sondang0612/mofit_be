@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { hashPassword } from 'src/common/utils/hashPassword';
+import { hashPassword } from 'src/common/utils/hash-password';
+import { slug } from 'src/common/utils/slug';
 import {
   attributesData,
   brandsData,
@@ -10,11 +11,11 @@ import {
 } from 'src/database/data';
 import { In } from 'typeorm';
 import { AttributesService } from '../attributes/attributes.service';
+import { BrandsService } from '../brands/brands.service';
 import { CategoriesService } from '../categories/categories.service';
+import { DiscountsService } from '../discounts/discounts.service';
 import { ProductsService } from '../products/products.service';
 import { UsersService } from '../users/users.service';
-import { DiscountsService } from '../discounts/discounts.service';
-import { BrandsService } from '../brands/brands.service';
 
 @Injectable()
 export class MockDataService {
@@ -116,6 +117,7 @@ export class MockDataService {
           category,
           attributes,
           brand,
+          slug: slug(product.title),
           ...(discount
             ? {
                 discount,

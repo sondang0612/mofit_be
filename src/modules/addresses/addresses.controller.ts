@@ -24,31 +24,24 @@ export class AddressesController {
 
   @Post()
   @Permissions(ERole.USER)
-  create(
-    @ExtractUser() user: UserParams,
-    @Body() createAddressDto: CreateAddressDto,
-  ) {
-    return this.addressesService.create({
-      ...createAddressDto,
-      userId: user?.id,
-      userEmail: user?.email,
-    });
+  create(@ExtractUser() user: UserParams, @Body() args: CreateAddressDto) {
+    return this.addressesService.create(args, user);
   }
 
   @Get()
-  @Permissions(ERole.ADMIN, ERole.USER)
+  @Permissions(ERole.USER)
   findAll(
     @ExtractUser() user: UserParams,
-    @Query() addressPaginationDto: AddressPaginationDto,
+    @Query() args: AddressPaginationDto,
   ) {
-    return this.addressesService.findAll(addressPaginationDto, user);
+    return this.addressesService.findAll(args, user);
   }
 
   @Delete('/:id')
   @Permissions(ERole.USER)
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@ExtractUser() user: UserParams, @Param('id') id: number) {
-    return this.addressesService.deleteMyAddress(id, user?.id, user?.email);
+    return this.addressesService.deleteMyAddress(id, user);
   }
 
   @Patch('/:addressId/default')
@@ -57,10 +50,6 @@ export class AddressesController {
     @ExtractUser() user: UserParams,
     @Param('addressId') addressId: number,
   ) {
-    return this.addressesService.setDefaultAddress({
-      addressId,
-      userEmail: user?.email,
-      userId: user?.id,
-    });
+    return this.addressesService.setDefaultAddress(addressId, user);
   }
 }

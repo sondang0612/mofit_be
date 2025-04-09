@@ -18,6 +18,9 @@ export class Product extends BaseEntity {
   @Column({ type: 'varchar', length: 255 })
   title: string;
 
+  @Column({ type: 'varchar', length: 255 })
+  slug: string;
+
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 

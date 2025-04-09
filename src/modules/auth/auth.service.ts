@@ -5,12 +5,14 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { instanceToInstance } from 'class-transformer';
-import { comparePassword } from 'src/common/utils/comparePassword';
-import { hashPassword } from 'src/common/utils/hashPassword';
+import { comparePassword } from 'src/common/utils/compare-password';
+import { hashPassword } from 'src/common/utils/hash-password';
 import { User } from 'src/database/entities/user.entity';
 import { UsersService } from '../users/users.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { RegisterAuthDto } from './dto/register-auth.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
+import { UserParams } from 'src/common/decorators/user.decorator';
 
 @Injectable()
 export class AuthService {
@@ -98,24 +100,10 @@ export class AuthService {
     };
   }
 
-  async updateProfile(args: {
-    firstName: string;
-    lastName: string;
-    phoneNumber: string;
-    currentPassword: string;
-    newPassword: string;
-    userId: number;
-    userEmail: string;
-  }) {
-    const {
-      firstName,
-      lastName,
-      phoneNumber,
-      currentPassword,
-      newPassword,
-      userId,
-      userEmail,
-    } = args;
+  async updateProfile(args: UpdateProfileDto, userParams: UserParams) {
+    const { firstName, lastName, phoneNumber, currentPassword, newPassword } =
+      args;
+    const { id: userId, email: userEmail } = userParams;
 
     const user = await this.usersService._findOneOrFail({
       where: { id: userId, email: userEmail },

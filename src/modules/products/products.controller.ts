@@ -23,9 +23,9 @@ export class ProductsController {
     return this.productsService.findAll(productPaginationDto);
   }
 
-  @Get(':id')
+  @Get(':slug')
   @Auth(EAuth.NONE)
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(+id);
+  findOne(@Param('slug') slug: string) {
+    return this.productsService.findOne(slug);
   }
 }

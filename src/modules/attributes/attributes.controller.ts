@@ -1,8 +1,11 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { AttributesService } from './attributes.service';
 import { CreateAttributeDto } from './dto/create-attribute.dto';
+import { Auth } from '../auth/guards/global-auth.guard';
+import { EAuth } from 'src/common/constants/auth.enum';
+import { EApiPathName } from 'src/common/constants/api-path.enum';
 
-@Controller('attributes')
+@Controller(EApiPathName.ATTRIBUTES)
 export class AttributesController {
   constructor(private readonly attributesService: AttributesService) {}
 
@@ -12,6 +15,7 @@ export class AttributesController {
   }
 
   @Get()
+  @Auth(EAuth.NONE)
   findAll() {
     return this.attributesService.findAll();
   }

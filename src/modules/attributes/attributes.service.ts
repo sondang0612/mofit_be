@@ -17,8 +17,15 @@ export class AttributesService extends TypeOrmBaseService<Attribute> {
     return this._create(createAttributeDto);
   }
 
-  findAll() {
-    return `This action returns all attributes`;
+  async findAll() {
+    const attributes = await this.attributesRepository.find({
+      where: { isDeleted: false },
+    });
+
+    return {
+      data: attributes,
+      message: 'List Successfully!!',
+    };
   }
 
   findOne(id: number) {

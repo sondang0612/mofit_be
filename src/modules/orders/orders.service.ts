@@ -1,9 +1,4 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
 import {
@@ -11,6 +6,7 @@ import {
   EPaymentMethod,
   EPaymentStatus,
 } from 'src/common/constants/order.enum';
+import { ERole } from 'src/common/constants/role.enum';
 import { ETableName } from 'src/common/constants/table-name.enum';
 import { UserParams } from 'src/common/decorators/user.decorator';
 import { Order } from 'src/database/entities/order.entity';
@@ -19,7 +15,6 @@ import { DataSource, FindOptionsWhere, In, Repository } from 'typeorm';
 import { PaymentsService } from '../payments/payments.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderPaginationDto } from './dto/order-pagination.dto';
-import { ERole } from 'src/common/constants/role.enum';
 
 @Injectable()
 export class OrdersService extends TypeOrmBaseService<Order> {
@@ -159,19 +154,7 @@ export class OrdersService extends TypeOrmBaseService<Order> {
     }
   }
 
-  async findAll(args: OrderPaginationDto, user: UserParams) {
-    if (user.role === ERole.USER) {
-      return this.findAllWithPagination({ ...args, userId: `${user.id}` });
-    }
-
-    if (user.role === ERole.ADMIN) {
-      return this.findAllWithPagination(args);
-    }
-
-    throw new NotFoundException('Order not found');
-  }
-
-  async findAllWithPagination(args: OrderPaginationDto) {
+  async findAll(args: OrderPaginationDto, user?: UserParams) {
     const { limit, page, sortBy, sort, txnRef, userId } = args;
 
     const queryBuilder = this.ordersRepository
@@ -179,9 +162,15 @@ export class OrdersService extends TypeOrmBaseService<Order> {
       .leftJoinAndSelect(`${this.entityName}.user`, 'user')
       .leftJoinAndSelect(`${this.entityName}.orderItems`, 'orderItems');
 
-    if (userId) {
+    if (userId && user.role === ERole.ADMIN) {
       queryBuilder.andWhere(`${this.entityName}.userId = :userId`, {
-        userId,
+        userId: userId,
+      });
+    }
+
+    if (ERole.USER) {
+      queryBuilder.andWhere(`${this.entityName}.userId = :userId`, {
+        userId: user.id,
       });
     }
 
@@ -206,7 +195,7 @@ export class OrdersService extends TypeOrmBaseService<Order> {
     };
   }
 
-  async findOne(id: number, user: UserParams) {
+  async findOne(id: number, user?: UserParams) {
     const whereCondition: FindOptionsWhere<Order> =
       user.role === ERole.ADMIN ? { id } : { id, user: { id: user.id } };
 

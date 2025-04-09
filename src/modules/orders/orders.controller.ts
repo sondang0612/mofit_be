@@ -12,12 +12,9 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Get()
-  @Permissions(ERole.ADMIN, ERole.USER)
-  findAll(
-    @ExtractUser() user: UserParams,
-    @Query() orderPaginationDto: OrderPaginationDto,
-  ) {
-    return this.ordersService.findAll(orderPaginationDto, user);
+  @Permissions(ERole.USER)
+  findAll(@ExtractUser() user: UserParams, @Query() args: OrderPaginationDto) {
+    return this.ordersService.findAll(args, user);
   }
 
   @Get(':id')
