@@ -1,22 +1,22 @@
 
-FROM node:20-alpine-slim AS deps
+FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile --production=false
 
-FROM node:20-alpine-slim AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN yarn build
 
-FROM node:20-alpine-slim AS prod-deps
+FROM node:22-alpine AS prod-deps
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile --production=true
 RUN yarn add bcrypt
 
-FROM node:20-alpine-slim
+FROM node:22-alpine
 WORKDIR /app
 
 COPY --from=builder /app/dist ./dist
