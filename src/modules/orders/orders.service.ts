@@ -138,7 +138,7 @@ export class OrdersService extends TypeOrmBaseService<Order> {
         const redirectUrl = await this.paymentsService.generateUrl({
           txnRef,
           ipAddress: user.ip,
-          orderInfo: `${user?.fullName} chuyển khoản ${totalPrice} cho đơn hàng #${order?.id}`,
+          orderInfo: `${user?.firstName + user.lastName} chuyển khoản ${totalPrice} cho đơn hàng #${order?.id}`,
           totalPrice,
         });
         return { ...res, redirectUrl };

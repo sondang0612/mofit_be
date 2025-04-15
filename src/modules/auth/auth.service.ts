@@ -3,30 +3,41 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { instanceToInstance } from 'class-transformer';
+import { EEnv } from 'src/common/constants/env.enum';
+import { redisKeys } from 'src/common/constants/redis';
+import { UserParams } from 'src/common/decorators/user.decorator';
+import { RedisService } from 'src/common/modules/redis/redis.service';
 import { comparePassword } from 'src/common/utils/compare-password';
 import { hashPassword } from 'src/common/utils/hash-password';
 import { User } from 'src/database/entities/user.entity';
+import { v4 as uuidv4 } from 'uuid';
 import { UsersService } from '../users/users.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { UserParams } from 'src/common/decorators/user.decorator';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private redisService: RedisService,
+    private configService: ConfigService,
   ) {}
 
   generateToken(payload: User) {
+    const jid = uuidv4();
+    this.redisService.set(
+      redisKeys.USER_JID.replace('$userId', `${payload.id}`),
+      jid,
+      this.configService.get<number>(EEnv.USER_JID_TTL),
+    );
     return this.jwtService.sign({
       id: payload.id,
-      email: payload.email,
-      role: payload.role,
-      fullName: `${payload.firstName} ${payload.lastName}`,
+      jid,
     });
   }
 
@@ -84,6 +95,16 @@ export class AuthService {
       fullName: `${user.lastName} ${user.firstName}`,
       role: user.role,
       message: 'Login successful',
+    };
+  }
+
+  async logout(user: UserParams) {
+    await this.redisService.delete(
+      redisKeys.USER_JID.replace('$userId', `${user.id}`),
+    );
+
+    return {
+      message: 'Logout successfully',
     };
   }
 

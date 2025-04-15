@@ -8,11 +8,15 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
+import { instanceToInstance } from 'class-transformer';
 import { Request } from 'express';
 import { EAuth } from 'src/common/constants/auth.enum';
 import { EEnv } from 'src/common/constants/env.enum';
+import { redisKeys } from 'src/common/constants/redis';
 import { ERole } from 'src/common/constants/role.enum';
+import { RedisService } from 'src/common/modules/redis/redis.service';
 import { extractTokenFromHeader } from 'src/common/utils/extract-token-from-header';
+import { UsersService } from 'src/modules/users/users.service';
 
 export const Auth = (type: EAuth) => SetMetadata('authType', type);
 export const Permissions = (...roles: ERole[]) => SetMetadata('roles', roles);
@@ -23,6 +27,8 @@ export class GlobalAuthGuard implements CanActivate {
     private reflector: Reflector,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private userService: UsersService,
+    private redisService: RedisService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -42,16 +48,31 @@ export class GlobalAuthGuard implements CanActivate {
       throw new UnauthorizedException('Missing jwt token');
     }
 
-    let user;
+    const decoded = (await this.jwtService.verifyAsync(token, {
+      secret: this.configService.get(EEnv.JWT_SECRET),
+    })) as any;
 
-    try {
-      user = await this.jwtService.verifyAsync(token, {
-        secret: this.configService.get(EEnv.JWT_SECRET),
-      });
-    } catch (error) {
-      throw new UnauthorizedException(error.message);
+    const user = await this.userService._findOne({
+      where: { id: decoded?.id },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException(
+        'Token is invalid or has been revoked. Please log in again.',
+      );
     }
 
+    const existingJid = await this.redisService.get(
+      redisKeys.USER_JID.replace('$userId', `${user.id}`),
+    );
+
+    if (!existingJid || existingJid !== decoded.jid) {
+      throw new UnauthorizedException(
+        'Token is invalid or has been revoked. Please log in again.',
+      );
+    }
+
+    // role
     const requiredRoles = this.reflector.getAllAndOverride<ERole[]>('roles', [
       context.getHandler(),
       context.getClass(),
@@ -61,14 +82,7 @@ export class GlobalAuthGuard implements CanActivate {
       return true;
     }
 
-    Object.assign(request, {
-      user: {
-        id: user?.id,
-        role: user?.role,
-        email: user?.email,
-        fullName: user?.fullName,
-      },
-    });
+    request.user = instanceToInstance(user);
 
     return requiredRoles.some((role) => user?.role?.includes(role));
   }

@@ -20,9 +20,9 @@ async function bootstrap() {
   });
 
   // limit request api
-  // 100 request for the same ip each 1 hours
+  // 1000 request for the same ip each 1 hours
   const limiter = rateLimit({
-    max: 100,
+    max: 1000,
     windowMs: 60 * 60 * 1000,
     message: 'Too many requests from this IP, please try again in an hour',
   });

@@ -1,14 +1,10 @@
 import type { ExecutionContext } from '@nestjs/common';
 import { createParamDecorator } from '@nestjs/common';
-import { ERole } from '../constants/role.enum';
+import { User } from 'src/database/entities/user.entity';
 
 export type UserParams = {
-  id: number;
-  email: string;
-  role: ERole;
   ip: string;
-  fullName: string;
-};
+} & User;
 
 export const ExtractUser = createParamDecorator(
   (_, context: ExecutionContext) => {

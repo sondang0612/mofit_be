@@ -1,13 +1,19 @@
-name: 'mofit-backend-dev'
+name: 'mofit-backend'
 
 services:
-  mofit-postgres-dev:
-    container_name: mofit-postgres-dev
+  mofit-postgres:
+    container_name: mofit-postgres
     image: postgres
     shm_size: 128mb
     environment:
       POSTGRES_PASSWORD: Admin@123
       POSTGRES_USER: postgres
-      POSTGRES_DB: mofit-postgres-dev
+      POSTGRES_DB: mofit-postgres
     ports:
       - '5432:5432'
+  mofit-redis:
+    image: redis:alpine
+    container_name: mofit-redis
+    ports:
+      - '6379:6379'
+    command: redis-server --appendonly yes --requirepass Admin123
