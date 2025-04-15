@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddOrderInsertUpdateStatusLogTrigger1688578432022
+export class AddOrderInsertUpdateStatusLogTrigger1744757141234
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
