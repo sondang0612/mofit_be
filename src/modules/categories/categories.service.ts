@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Category } from 'src/database/entities/category.entity';
 import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { instanceToInstance } from 'class-transformer';
+import { instanceToInstance, instanceToPlain } from 'class-transformer';
 
 @Injectable()
 export class CategoriesService extends TypeOrmBaseService<Category> {
@@ -62,7 +62,7 @@ export class CategoriesService extends TypeOrmBaseService<Category> {
 
     return {
       msg: 'Get list categories successfully!',
-      data: categories,
+      data: instanceToPlain(categories),
     };
   }
 

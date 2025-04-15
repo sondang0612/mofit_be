@@ -20,6 +20,7 @@ import { DiscountsModule } from './modules/discounts/discounts.module';
 import { BrandsModule } from './modules/brands/brands.module';
 import { ContactsModule } from './modules/contacts/contacts.module';
 import { RedisModules } from './common/modules/redis/redis.module';
+import { OrderStatusLogsModule } from './modules/order-status-logs/order-status-logs.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { RedisModules } from './common/modules/redis/redis.module';
     BrandsModule,
     ContactsModule,
     RedisModules,
+    OrderStatusLogsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: GlobalAuthGuard }],
 })

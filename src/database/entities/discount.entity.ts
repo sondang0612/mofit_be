@@ -2,10 +2,12 @@ import { ETableName } from 'src/common/constants/table-name.enum';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Product } from './product.entity';
+import { Transform } from 'class-transformer';
 
 @Entity(ETableName.DISCOUNT)
 export class Discount extends BaseEntity {
   @Column({ type: 'decimal', precision: 10, scale: 0 })
+  @Transform(({ value }) => parseFloat(value))
   percentage: number;
 
   @Column({ type: 'timestamp', nullable: true })

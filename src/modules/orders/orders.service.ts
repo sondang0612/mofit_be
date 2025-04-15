@@ -16,6 +16,7 @@ import { PaymentsService } from '../payments/payments.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderPaginationDto } from './dto/order-pagination.dto';
 import { instanceToPlain } from 'class-transformer';
+import { OrderStatusLogsService } from '../order-status-logs/order-status-logs.service';
 
 @Injectable()
 export class OrdersService extends TypeOrmBaseService<Order> {
@@ -24,6 +25,7 @@ export class OrdersService extends TypeOrmBaseService<Order> {
     private readonly ordersRepository: Repository<Order>,
     @Inject(forwardRef(() => PaymentsService))
     private readonly paymentsService: PaymentsService,
+    private readonly orderStatusLogsService: OrderStatusLogsService,
     private readonly dataSource: DataSource,
   ) {
     super(ordersRepository);
@@ -214,6 +216,36 @@ export class OrdersService extends TypeOrmBaseService<Order> {
     return {
       data: instanceToPlain(order),
       message: 'Get Order Successfull!!',
+    };
+  }
+
+  async findOrderTimeLine(id: number, user?: UserParams) {
+    const allStatuses = Object.values(EOrderStatus);
+
+    const rawResults = await this.orderStatusLogsService.repository
+      .createQueryBuilder('log')
+      .leftJoin('log.order', 'order')
+      .leftJoin('order.user', 'user')
+      .select('log.currentStatus', 'status')
+      .addSelect('MAX(log.time)', 'latestTime')
+      .where('log.orderId = :orderId', { orderId: id })
+      .andWhere('user.id = :userId', { userId: user.id })
+      .andWhere('log.isDeleted = false')
+      .andWhere('log.currentStatus IN (:...statuses)', {
+        statuses: allStatuses,
+      })
+      .groupBy('log.currentStatus')
+      .getRawMany();
+    const result: Record<EOrderStatus, { time: Date } | null> = {} as any;
+
+    allStatuses.forEach((status) => {
+      const matched = rawResults.find((row) => row.status === status);
+      result[status] = matched ? matched.latestTime : null;
+    });
+
+    return {
+      data: result,
+      message: 'Get Order Timeline Successfull!!',
     };
   }
 

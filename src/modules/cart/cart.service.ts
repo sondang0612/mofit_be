@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { instanceToInstance } from 'class-transformer';
+import { instanceToPlain } from 'class-transformer';
 import { CartItemsService } from '../cart-items/cart-items.service';
 import { UsersService } from '../users/users.service';
 
@@ -20,7 +20,7 @@ export class CartService {
 
     return {
       message: 'List cart items successfully',
-      data: instanceToInstance(cartItems),
+      data: instanceToPlain(cartItems),
     };
   }
 }

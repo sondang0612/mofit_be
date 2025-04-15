@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { instanceToPlain } from 'class-transformer';
+import { SortOrder } from 'src/common/dtos/pagination.dto';
 import { Product } from 'src/database/entities/product.entity';
 import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
 import { Repository } from 'typeorm';
 import { CategoriesService } from '../categories/categories.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductPaginationDto } from './dto/product-pagination.dto';
-import { SortOrder } from 'src/common/dtos/pagination.dto';
-import { instanceToInstance } from 'class-transformer';
 @Injectable()
 export class ProductsService extends TypeOrmBaseService<Product> {
   constructor(
@@ -131,7 +131,7 @@ export class ProductsService extends TypeOrmBaseService<Product> {
       relations: ['category', 'attributes', 'discount', 'brand'],
     });
     return {
-      data: instanceToInstance(product),
+      data: instanceToPlain(product),
       message: 'Get product successfully!',
     };
   }

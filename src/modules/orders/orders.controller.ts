@@ -23,6 +23,12 @@ export class OrdersController {
     return this.ordersService.findOne(+id, user);
   }
 
+  @Get(':id/timeline')
+  @Permissions(ERole.ADMIN, ERole.USER)
+  findOrderTimeLine(@ExtractUser() user: UserParams, @Param('id') id: string) {
+    return this.ordersService.findOrderTimeLine(+id, user);
+  }
+
   @Post()
   @Permissions(ERole.USER)
   create(

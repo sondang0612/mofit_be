@@ -12,6 +12,7 @@ import { Category } from './category.entity';
 import { Attribute } from './attribute.entity';
 import { Discount } from './discount.entity';
 import { Brand } from './brand.entity';
+import { Transform } from 'class-transformer';
 
 @Entity(ETableName.PRODUCT)
 export class Product extends BaseEntity {
@@ -22,6 +23,7 @@ export class Product extends BaseEntity {
   slug: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Transform(({ value }) => parseFloat(value))
   price: number;
 
   @Column({ type: 'varchar', length: 255, nullable: true })

@@ -9,6 +9,7 @@ import {
   EShippingMethod,
 } from 'src/common/constants/order.enum';
 import { Payment } from './payment.entity';
+import { Transform } from 'class-transformer';
 
 @Entity(ETableName.ORDER)
 export class Order extends BaseEntity {
@@ -26,6 +27,7 @@ export class Order extends BaseEntity {
   shippingMethod: EShippingMethod;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Transform(({ value }) => parseFloat(value))
   shippingPrice: number;
 
   @Column({ type: 'enum', enum: EPaymentMethod, default: EPaymentMethod.COD })
@@ -35,15 +37,23 @@ export class Order extends BaseEntity {
   discount: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Transform(({ value }) => parseFloat(value))
   vat: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Transform(({ value }) => parseFloat(value))
   subTotal: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Transform(({ value }) => parseFloat(value))
   totalPrice: number;
 
-  @Column({ type: 'enum', enum: EOrderStatus, default: EOrderStatus.PENDING })
+  @Column({
+    type: 'enum',
+    enum: EOrderStatus,
+    default: EOrderStatus.PENDING,
+    enumName: 'order_status_enum',
+  })
   status: EOrderStatus;
 
   @Column({ type: 'jsonb' })
