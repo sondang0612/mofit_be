@@ -15,6 +15,7 @@ import { DataSource, FindOptionsWhere, In, Repository } from 'typeorm';
 import { PaymentsService } from '../payments/payments.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderPaginationDto } from './dto/order-pagination.dto';
+import { instanceToPlain } from 'class-transformer';
 
 @Injectable()
 export class OrdersService extends TypeOrmBaseService<Order> {
@@ -63,7 +64,7 @@ export class OrdersService extends TypeOrmBaseService<Order> {
       ]);
       const order = (await queryRunner.manager.save(
         this.ordersRepository.create({
-          address,
+          address: instanceToPlain(address),
           vat,
           discount,
           paymentMethod,
@@ -74,7 +75,7 @@ export class OrdersService extends TypeOrmBaseService<Order> {
           user: { id: user.id },
           createdBy: user.email,
           txnRef,
-          cart: { ...cartItems },
+          cart: instanceToPlain(cartItems),
           status:
             paymentMethod === EPaymentMethod.COD
               ? EOrderStatus.PENDING
@@ -155,7 +156,7 @@ export class OrdersService extends TypeOrmBaseService<Order> {
   }
 
   async findAll(args: OrderPaginationDto, user?: UserParams) {
-    const { limit, page, sortBy, sort, txnRef, userId } = args;
+    const { limit, page, sortBy, sort, txnRef, userId, status } = args;
 
     const queryBuilder = this.ordersRepository
       .createQueryBuilder(this.entityName)
@@ -177,6 +178,12 @@ export class OrdersService extends TypeOrmBaseService<Order> {
     if (txnRef) {
       queryBuilder.andWhere(`${this.entityName}.txnRef = :txnRef`, {
         txnRef,
+      });
+    }
+
+    if (status) {
+      queryBuilder.andWhere(`${this.entityName}.status = :status`, {
+        status,
       });
     }
 
@@ -205,7 +212,7 @@ export class OrdersService extends TypeOrmBaseService<Order> {
     });
 
     return {
-      data: order,
+      data: instanceToPlain(order),
       message: 'Get Order Successfull!!',
     };
   }
