@@ -14,4 +14,12 @@ export class OrderPaginationDto extends PaginationDto {
   @IsOptional()
   @IsEnum(EOrderStatus)
   status?: EOrderStatus;
+
+  @IsOptional()
+  @IsString()
+  productTitle?: string;
+
+  @IsOptional()
+  @IsString()
+  orderId?: string;
 }

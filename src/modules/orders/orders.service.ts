@@ -158,13 +158,22 @@ export class OrdersService extends TypeOrmBaseService<Order> {
   }
 
   async findAll(args: OrderPaginationDto, user?: UserParams) {
-    const { limit, page, sortBy, sort, txnRef, userId, status } = args;
+    const {
+      limit,
+      page,
+      sortBy,
+      sort,
+      txnRef,
+      userId,
+      status,
+      orderId,
+      productTitle,
+    } = args;
 
     const queryBuilder = this.ordersRepository
       .createQueryBuilder(this.entityName)
       .leftJoinAndSelect(`${this.entityName}.user`, 'user')
       .leftJoinAndSelect(`${this.entityName}.orderItems`, 'orderItems');
-
     if (userId && user.role === ERole.ADMIN) {
       queryBuilder.andWhere(`${this.entityName}.userId = :userId`, {
         userId: userId,
@@ -189,6 +198,21 @@ export class OrdersService extends TypeOrmBaseService<Order> {
       });
     }
 
+    if (orderId) {
+      queryBuilder.andWhere(`${this.entityName}.id = :id`, {
+        id: orderId,
+      });
+    }
+
+    if (productTitle) {
+      queryBuilder.andWhere(
+        `orderItems.product ->> 'title' ILIKE :productTitle`,
+        {
+          productTitle: `%${productTitle}%`,
+        },
+      );
+    }
+
     const data = await this._findAll(queryBuilder, {
       limit,
       page,
@@ -202,6 +226,16 @@ export class OrdersService extends TypeOrmBaseService<Order> {
       message: 'Get all successfully!!',
       data,
     };
+  }
+
+  removeVietnameseTones(str: string): string {
+    return str
+      .normalize('NFD') // tách dấu khỏi chữ
+      .replace(/[\u0300-\u036f]/g, '') // xóa dấu
+      .replace(/đ/g, 'd') // đ -> d
+      .replace(/Đ/g, 'D') // Đ -> D
+      .replace(/[^a-zA-Z0-9 ]/g, '') // bỏ kí tự đặc biệt (nếu cần)
+      .trim();
   }
 
   async findOne(id: number, user?: UserParams) {
