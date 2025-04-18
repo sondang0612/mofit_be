@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/database/entities/user.entity';
 import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { InjectRepository } from '@nestjs/typeorm';
 import { ProductPagination } from './dto/product-pagination.dto';
+import { UserParams } from 'src/common/decorators/user.decorator';
+import { EUserDeleteRequestStatus } from 'src/common/constants/user-delete-request-status.enum';
 
 @Injectable()
 export class UsersService extends TypeOrmBaseService<User> {
@@ -16,6 +18,23 @@ export class UsersService extends TypeOrmBaseService<User> {
 
   create(createUserDto: CreateUserDto) {
     return this._create(createUserDto);
+  }
+
+  async requestDelete(user: UserParams) {
+    if (user.deletionStatus === EUserDeleteRequestStatus.PENDING) {
+      throw new BadRequestException('Delete request created, please wait');
+    }
+
+    if (user.deletionStatus === EUserDeleteRequestStatus.APPROVED) {
+      throw new BadRequestException('Account is Deleted');
+    }
+
+    await this.userRepository.update(user.id, {
+      deletionStatus: EUserDeleteRequestStatus.PENDING,
+    });
+    return {
+      message: 'Create Delete Request Successfully',
+    };
   }
 
   async findAll(args: ProductPagination) {

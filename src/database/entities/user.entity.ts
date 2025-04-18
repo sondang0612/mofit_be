@@ -1,12 +1,14 @@
 import { Exclude } from 'class-transformer';
+import { EGender } from 'src/common/constants/gender.enum';
+import { ERole } from 'src/common/constants/role.enum';
 import { ETableName } from 'src/common/constants/table-name.enum';
 import { Column, Entity, OneToMany } from 'typeorm';
+import { Address } from './address.entity';
 import { BaseEntity } from './base.entity';
 import { CartItem } from './cart-item.entity';
-import { Address } from './address.entity';
 import { Order } from './order.entity';
 import { Payment } from './payment.entity';
-import { ERole } from 'src/common/constants/role.enum';
+import { EUserDeleteRequestStatus } from 'src/common/constants/user-delete-request-status.enum';
 
 @Entity(ETableName.USER)
 export class User extends BaseEntity {
@@ -29,6 +31,12 @@ export class User extends BaseEntity {
   @Column()
   lastName: string;
 
+  @Column({ nullable: true })
+  birthday: string;
+
+  @Column({ type: 'enum', enum: EGender, default: EGender.OTHER })
+  gender: EGender;
+
   @Column({ type: 'enum', enum: ERole, default: ERole.USER })
   role: ERole;
 
@@ -43,4 +51,11 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Payment, (payment) => payment.user)
   payments: Payment[];
+
+  @Column({
+    type: 'enum',
+    enum: EUserDeleteRequestStatus,
+    default: EUserDeleteRequestStatus.NONE,
+  })
+  deletionStatus: EUserDeleteRequestStatus;
 }

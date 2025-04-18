@@ -7,8 +7,6 @@ dotenv.config({ path: '.env.local' });
 
 const configService = new ConfigService();
 
-console.log(__dirname + './entities/*.entity.{ts,js}');
-
 export const dataSourceOptions: DataSourceOptions = {
   type: configService.get<any>(EEnv.DB_TYPE),
   host: configService.get(EEnv.DB_HOST),

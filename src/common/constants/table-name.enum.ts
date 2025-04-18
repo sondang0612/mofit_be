@@ -3,6 +3,7 @@ export enum ETableName {
   CATEGORY = 'categories',
   ATTIRBUTE = 'attributes',
   USER = 'users',
+  USER_DELETE_REQUEST = 'user_delete_request',
   CART = 'carts',
   CART_ITEM = 'cart_items',
   ADDRESS = 'addresses',

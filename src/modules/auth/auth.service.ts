@@ -108,15 +108,9 @@ export class AuthService {
     };
   }
 
-  async getProfile(args: { id: number; email: string }) {
-    const { id, email } = args;
-
-    const user = await this.usersService._findOneOrFail({
-      where: { id, email },
-    });
-
+  async getProfile(args: UserParams) {
     return {
-      data: instanceToInstance(user),
+      data: args,
       message: 'Get profile successfully',
     };
   }

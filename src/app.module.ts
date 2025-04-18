@@ -2,25 +2,25 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGlobalModule } from './common/modules/jwt-global.module';
+import { RedisModules } from './common/modules/redis/redis.module';
 import { DatabaseModule } from './database/database.module';
 import { AddressesModule } from './modules/addresses/addresses.module';
 import { AttributesModule } from './modules/attributes/attributes.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { GlobalAuthGuard } from './modules/auth/guards/global-auth.guard';
+import { BrandsModule } from './modules/brands/brands.module';
 import { CartItemsModule } from './modules/cart-items/cart-items.module';
 import { CartModule } from './modules/cart/cart.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { ContactsModule } from './modules/contacts/contacts.module';
+import { DiscountsModule } from './modules/discounts/discounts.module';
 import { MockDataModule } from './modules/mock-data/mock-data.module';
 import { OrderItemsModule } from './modules/order-items/order-items.module';
+import { OrderStatusLogsModule } from './modules/order-status-logs/order-status-logs.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { ProductsModule } from './modules/products/products.module';
 import { UsersModule } from './modules/users/users.module';
-import { DiscountsModule } from './modules/discounts/discounts.module';
-import { BrandsModule } from './modules/brands/brands.module';
-import { ContactsModule } from './modules/contacts/contacts.module';
-import { RedisModules } from './common/modules/redis/redis.module';
-import { OrderStatusLogsModule } from './modules/order-status-logs/order-status-logs.module';
 
 @Module({
   imports: [

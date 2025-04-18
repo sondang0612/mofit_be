@@ -17,6 +17,7 @@ import { Permissions } from '../auth/guards/global-auth.guard';
 import { AddressesService } from './addresses.service';
 import { AddressPaginationDto } from './dto/address-pagination.dto';
 import { CreateAddressDto } from './dto/create-address.dto';
+import { UpdateAddressDto } from './dto/update-address.dto';
 
 @Controller({ path: EApiPathName.ADDRESSES })
 export class AddressesController {
@@ -42,6 +43,16 @@ export class AddressesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@ExtractUser() user: UserParams, @Param('id') id: number) {
     return this.addressesService.deleteMyAddress(id, user);
+  }
+
+  @Patch()
+  @Permissions(ERole.USER)
+  @HttpCode(HttpStatus.OK)
+  updateAddress(
+    @ExtractUser() user: UserParams,
+    @Body() args: UpdateAddressDto,
+  ) {
+    return this.addressesService.updateMyAddress(args, user);
   }
 
   @Patch('/:addressId/default')

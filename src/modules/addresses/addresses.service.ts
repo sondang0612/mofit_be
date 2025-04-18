@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Address } from 'src/database/entities/address.entity';
 import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
@@ -6,6 +10,8 @@ import { Repository } from 'typeorm';
 import { AddressPaginationDto } from './dto/address-pagination.dto';
 import { UserParams } from 'src/common/decorators/user.decorator';
 import { CreateAddressDto } from './dto/create-address.dto';
+import { UpdateAddressDto } from './dto/update-address.dto';
+import { instanceToPlain } from 'class-transformer';
 
 @Injectable()
 export class AddressesService extends TypeOrmBaseService<Address> {
@@ -94,6 +100,28 @@ export class AddressesService extends TypeOrmBaseService<Address> {
     await this._softDelete(address.id, user.email);
 
     return null;
+  }
+
+  async updateMyAddress(args: UpdateAddressDto, user: UserParams) {
+    const { id, ...updateData } = args;
+
+    const address = await this.repository.findOne({
+      where: { id, user: { id: user.id } },
+    });
+
+    if (!address) {
+      throw new NotFoundException(
+        'Address not found or not belong to the user',
+      );
+    }
+
+    const updated = this.repository.merge(address, updateData);
+    const updatedData = await this.repository.save(updated);
+
+    return {
+      message: 'Updated Address Successfull!!',
+      data: instanceToPlain(updatedData),
+    };
   }
 
   async setDefaultAddress(addressId: number, user: UserParams) {
