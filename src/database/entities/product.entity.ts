@@ -6,6 +6,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Category } from './category.entity';
@@ -13,6 +14,7 @@ import { Attribute } from './attribute.entity';
 import { Discount } from './discount.entity';
 import { Brand } from './brand.entity';
 import { Transform } from 'class-transformer';
+import { ProductLike } from './product-like.entity';
 
 @Entity(ETableName.PRODUCT)
 export class Product extends BaseEntity {
@@ -70,4 +72,7 @@ export class Product extends BaseEntity {
 
   @ManyToOne(() => Brand, (brand) => brand.products)
   brand: Brand;
+
+  @OneToMany(() => ProductLike, (productLike) => productLike.product)
+  likes: ProductLike[];
 }

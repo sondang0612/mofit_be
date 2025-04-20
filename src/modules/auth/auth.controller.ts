@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { EApiPathName } from 'src/common/constants/api-path.enum';
 import { EAuth } from 'src/common/constants/auth.enum';
 import { ERole } from 'src/common/constants/role.enum';
@@ -38,5 +48,30 @@ export class AuthController {
     @Body() args: UpdateProfileDto,
   ) {
     return this.authService.updateProfile(args, user);
+  }
+
+  @Get('favorite-products')
+  @Permissions(ERole.USER)
+  getFavoriteProducts(@ExtractUser() user: UserParams) {
+    return this.authService.getFavoriteProducts(user);
+  }
+
+  @Post('/product/:productId/like')
+  @Permissions(ERole.USER)
+  likeProduct(
+    @ExtractUser() user: UserParams,
+    @Param('productId') productId: number,
+  ) {
+    return this.authService.likeProduct(productId, user);
+  }
+
+  @Delete('/product/:productId/like')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Permissions(ERole.USER)
+  unLikeProduct(
+    @ExtractUser() user: UserParams,
+    @Param('productId') productId: number,
+  ) {
+    return this.authService.deleteLikeProduct(productId, user);
   }
 }

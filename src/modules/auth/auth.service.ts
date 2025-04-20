@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { instanceToInstance } from 'class-transformer';
+import { instanceToPlain } from 'class-transformer';
 import { EEnv } from 'src/common/constants/env.enum';
 import { redisKeys } from 'src/common/constants/redis';
 import { UserParams } from 'src/common/decorators/user.decorator';
@@ -14,6 +14,7 @@ import { comparePassword } from 'src/common/utils/compare-password';
 import { hashPassword } from 'src/common/utils/hash-password';
 import { User } from 'src/database/entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { ProductLikeService } from '../product-like/product-like.service';
 import { UsersService } from '../users/users.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { RegisterAuthDto } from './dto/register-auth.dto';
@@ -23,6 +24,7 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 export class AuthService {
   constructor(
     private usersService: UsersService,
+    private productLikeService: ProductLikeService,
     private jwtService: JwtService,
     private redisService: RedisService,
     private configService: ConfigService,
@@ -152,8 +154,49 @@ export class AuthService {
     await this.usersService.repository.save(user);
 
     return {
-      data: instanceToInstance(user),
-      message: 'Get profile successfully',
+      data: instanceToPlain(user),
+      message: 'Update Profile successfully',
     };
+  }
+
+  async getFavoriteProducts(args: UserParams) {
+    const favoriteProducts = await this.productLikeService.repository.find({
+      where: { user: { id: args.id, isDeleted: false }, isDeleted: false },
+      relations: ['product'],
+    });
+    return {
+      data: instanceToPlain(favoriteProducts),
+      message: 'Get Favorite Products successfully',
+    };
+  }
+
+  async likeProduct(productId: number, user: UserParams) {
+    const isExisted = await this.productLikeService._findOne({
+      where: { user: { id: user.id }, product: { id: productId } },
+    });
+    if (!isExisted) {
+      await this.productLikeService._create({
+        user: { id: user.id },
+        product: { id: productId },
+      });
+    }
+
+    return {
+      message: 'Like Products successfully',
+    };
+  }
+
+  async deleteLikeProduct(productId: number, user: UserParams) {
+    console.log({
+      user: { id: user.id },
+      product: { id: productId },
+    });
+
+    await this.productLikeService.repository.delete({
+      user: { id: user.id },
+      product: { id: productId },
+    });
+
+    return null;
   }
 }

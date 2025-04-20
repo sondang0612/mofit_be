@@ -9,6 +9,7 @@ import { CartItem } from './cart-item.entity';
 import { Order } from './order.entity';
 import { Payment } from './payment.entity';
 import { EUserDeleteRequestStatus } from 'src/common/constants/user-delete-request-status.enum';
+import { ProductLike } from './product-like.entity';
 
 @Entity(ETableName.USER)
 export class User extends BaseEntity {
@@ -58,4 +59,7 @@ export class User extends BaseEntity {
     default: EUserDeleteRequestStatus.NONE,
   })
   deletionStatus: EUserDeleteRequestStatus;
+
+  @OneToMany(() => ProductLike, (productLike) => productLike.user)
+  likedProducts: ProductLike[];
 }
