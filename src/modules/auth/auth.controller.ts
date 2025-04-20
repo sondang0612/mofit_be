@@ -31,7 +31,7 @@ export class AuthController {
     return this.authService.getProfile(user);
   }
 
-  @Put('update-profile')
+  @Put('profile')
   @Permissions(ERole.ADMIN, ERole.USER)
   updateProfile(
     @ExtractUser() user: UserParams,

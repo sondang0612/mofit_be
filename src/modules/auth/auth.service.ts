@@ -116,8 +116,15 @@ export class AuthService {
   }
 
   async updateProfile(args: UpdateProfileDto, userParams: UserParams) {
-    const { firstName, lastName, phoneNumber, currentPassword, newPassword } =
-      args;
+    const {
+      firstName,
+      lastName,
+      phoneNumber,
+      currentPassword,
+      newPassword,
+      birthday,
+      gender,
+    } = args;
     const { id: userId, email: userEmail } = userParams;
 
     const user = await this.usersService._findOneOrFail({
@@ -139,6 +146,8 @@ export class AuthService {
     user.firstName = firstName;
     user.lastName = lastName;
     user.phoneNumber = phoneNumber;
+    user.birthday = birthday;
+    user.gender = gender;
 
     await this.usersService.repository.save(user);
 
