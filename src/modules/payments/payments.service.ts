@@ -11,6 +11,7 @@ import * as dayjs from 'dayjs';
 import * as qs from 'qs';
 import { EEnv } from 'src/common/constants/env.enum';
 import { EOrderStatus, EPaymentStatus } from 'src/common/constants/order.enum';
+import { ETableName } from 'src/common/constants/table-name.enum';
 import {
   EVnpayResponseCode,
   EVnpayTransactionNo,
@@ -19,13 +20,14 @@ import {
   VnpayResponseCodeDescription,
 } from 'src/common/constants/vnpay.enum';
 import { sortObject } from 'src/common/utils/sort-object';
+import { Order } from 'src/database/entities/order.entity';
 import { Payment } from 'src/database/entities/payment.entity';
 import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
 import { DataSource, In, Repository } from 'typeorm';
 import { OrdersService } from '../orders/orders.service';
+import { PaymentRefundDto } from './dto/payment-refund.dto';
 import { VnpayIpnDto } from './dto/vnpay.dto';
-import { ETableName } from 'src/common/constants/table-name.enum';
-import { Order } from 'src/database/entities/order.entity';
+import { UserParams } from 'src/common/decorators/user.decorator';
 @Injectable()
 export class PaymentsService extends TypeOrmBaseService<Payment> {
   constructor(
@@ -155,7 +157,7 @@ export class PaymentsService extends TypeOrmBaseService<Payment> {
         console.info(
           `Order ${vnp_TxnRef} already processed with status: ${order.status}`,
         );
-        return VNPAY_RESPONSE.SUCCESS;
+        return VNPAY_RESPONSE.ORDER_CONFIRMED;
       }
 
       const payment = await queryRunner.manager.findOne(Payment, {
@@ -165,12 +167,12 @@ export class PaymentsService extends TypeOrmBaseService<Payment> {
 
       if (!payment) {
         console.warn(`Order not found with Ref: ${vnp_TxnRef}`);
-        return VNPAY_RESPONSE.PAYMENT_NOT_FOUND;
+        return VNPAY_RESPONSE.ORDER_NOT_FOUND;
       }
 
       if (payment.status === EPaymentStatus.COMPLETED) {
         console.warn(`Order not found with Ref: ${vnp_TxnRef}`);
-        return VNPAY_RESPONSE.SUCCESS;
+        return VNPAY_RESPONSE.ORDER_CONFIRMED;
       }
 
       if (
@@ -224,7 +226,7 @@ export class PaymentsService extends TypeOrmBaseService<Payment> {
     } catch (error) {
       await queryRunner.rollbackTransaction();
       console.error('Error processing payment IPN:', error);
-      return VNPAY_RESPONSE.SERVER_ERROR;
+      return VNPAY_RESPONSE.UNKNOWN_ERROR;
     } finally {
       await queryRunner.release();
     }
@@ -252,5 +254,97 @@ export class PaymentsService extends TypeOrmBaseService<Payment> {
       .digest('hex');
 
     return expectedHash === receivedHash && tmnCode === vnpayIpnDto.vnp_TmnCode;
+  }
+
+  async handleVnpayRefund(args: PaymentRefundDto, user: UserParams) {
+    const { orderId } = args;
+    const version = this.configService.get<string>(
+      EEnv.PAYMENT_GATEWAY_VERSION,
+    );
+    const tmnCode = this.configService.get<string>(EEnv.TMN_CODE);
+    const refundUrl = this.configService.get<string>(
+      EEnv.PAYMENT_GATEWAY_REFUND_URL,
+    );
+    const secretKey = this.configService.get<string>(EEnv.SECRET_KEY);
+
+    const order = await this.ordersService._findOneOrFail({
+      where: { id: orderId, user: { id: user.id } },
+      relations: ['payment'],
+    });
+
+    const vnp_RequestId = dayjs().format('HHmmss');
+    const vnp_Version = version;
+    const vnp_Command = 'refund';
+    const vnp_TmnCode = tmnCode;
+    const vnp_TransactionType = '02';
+    const vnp_TxnRef = order.txnRef;
+    const vnp_Amount = `${order?.payment?.details?.paymentAmount * 100}`;
+    const vnp_TransactionNo = order?.payment?.details?.transactionID;
+    const vnp_TransactionDate = order?.payment?.details?.paidAt;
+    const vnp_CreateBy = user.username;
+    const vnp_CreateDate = dayjs().format('YYYYMMDDHHmmss');
+    const vnp_IpAddr = user.ip;
+    const vnp_OrderInfo = `Hoan tien GD ma:${order.txnRef}`;
+
+    let data =
+      vnp_RequestId +
+      '|' +
+      vnp_Version +
+      '|' +
+      vnp_Command +
+      '|' +
+      vnp_TmnCode +
+      '|' +
+      vnp_TransactionType +
+      '|' +
+      vnp_TxnRef +
+      '|' +
+      vnp_Amount +
+      '|' +
+      vnp_TransactionNo +
+      '|' +
+      vnp_TransactionDate +
+      '|' +
+      vnp_CreateBy +
+      '|' +
+      vnp_CreateDate +
+      '|' +
+      vnp_IpAddr +
+      '|' +
+      vnp_OrderInfo;
+    let hmac = crypto.createHmac('sha512', secretKey);
+    let vnp_SecureHash = hmac.update(new Buffer(data, 'utf-8')).digest('hex');
+
+    let vnp_Params: Record<string, any> = {
+      vnp_RequestId,
+      vnp_Version,
+      vnp_Command,
+      vnp_TmnCode,
+      vnp_TransactionType,
+      vnp_TxnRef,
+      vnp_Amount,
+      vnp_TransactionNo,
+      vnp_TransactionDate,
+      vnp_CreateBy,
+      vnp_CreateDate,
+      vnp_IpAddr,
+      vnp_OrderInfo,
+      vnp_SecureHash,
+    };
+
+    const res = await fetch(refundUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(vnp_Params),
+    });
+
+    const responseData = await res.json();
+
+    return {
+      vnp_Params,
+      responseData,
+    };
   }
 }
