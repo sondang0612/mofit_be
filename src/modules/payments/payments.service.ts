@@ -286,7 +286,7 @@ export class PaymentsService extends TypeOrmBaseService<Payment> {
     const vnp_IpAddr = user.ip;
     const vnp_OrderInfo = `Hoan tien GD ma:${order.txnRef}`;
 
-    let data =
+    const data =
       vnp_RequestId +
       '|' +
       vnp_Version +
@@ -312,10 +312,10 @@ export class PaymentsService extends TypeOrmBaseService<Payment> {
       vnp_IpAddr +
       '|' +
       vnp_OrderInfo;
-    let hmac = crypto.createHmac('sha512', secretKey);
-    let vnp_SecureHash = hmac.update(new Buffer(data, 'utf-8')).digest('hex');
+    const hmac = crypto.createHmac('sha512', secretKey);
+    const vnp_SecureHash = hmac.update(new Buffer(data, 'utf-8')).digest('hex');
 
-    let vnp_Params: Record<string, any> = {
+    const vnp_Params: Record<string, any> = {
       vnp_RequestId,
       vnp_Version,
       vnp_Command,

@@ -17,6 +17,12 @@ export class OrdersController {
     return this.ordersService.findAll(args, user);
   }
 
+  @Get('admin')
+  @Permissions(ERole.ADMIN)
+  findByAdmin(@Query() args: OrderPaginationDto) {
+    return this.ordersService.findAll(args);
+  }
+
   @Get(':id')
   @Permissions(ERole.ADMIN, ERole.USER)
   findOne(@ExtractUser() user: UserParams, @Param('id') id: string) {

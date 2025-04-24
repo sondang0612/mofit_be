@@ -158,31 +158,17 @@ export class OrdersService extends TypeOrmBaseService<Order> {
   }
 
   async findAll(args: OrderPaginationDto, user?: UserParams) {
-    const {
-      limit,
-      page,
-      sortBy,
-      sort,
-      txnRef,
-      userId,
-      status,
-      orderId,
-      productTitle,
-    } = args;
+    const { limit, page, sortBy, sort, txnRef, status, orderId, productTitle } =
+      args;
 
     const queryBuilder = this.ordersRepository
       .createQueryBuilder(this.entityName)
       .leftJoinAndSelect(`${this.entityName}.user`, 'user')
       .leftJoinAndSelect(`${this.entityName}.orderItems`, 'orderItems');
-    if (userId && user.role === ERole.ADMIN) {
-      queryBuilder.andWhere(`${this.entityName}.userId = :userId`, {
-        userId: userId,
-      });
-    }
 
-    if (ERole.USER) {
+    if (user?.id) {
       queryBuilder.andWhere(`${this.entityName}.userId = :userId`, {
-        userId: user.id,
+        userId: user?.id,
       });
     }
 
