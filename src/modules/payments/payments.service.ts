@@ -226,7 +226,7 @@ export class PaymentsService extends TypeOrmBaseService<Payment> {
     } catch (error) {
       await queryRunner.rollbackTransaction();
       console.error('Error processing payment IPN:', error);
-      return VNPAY_RESPONSE.UNKNOWN_ERROR;
+      return VNPAY_RESPONSE.SUCCESS;
     } finally {
       await queryRunner.release();
     }

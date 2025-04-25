@@ -80,8 +80,8 @@ export enum ERspCode {
 export const VNPAY_RESPONSE = {
   SUCCESS: { RspCode: '00', Message: 'Confirm Success' },
   INVALID_CHECKSUM: { RspCode: '97', Message: 'Invalid Checksum' },
-  ORDER_NOT_FOUND: { RspCode: '01', Message: 'Order not Found' },
+  ORDER_NOT_FOUND: { RspCode: '01', Message: 'Order Not Found' },
   ORDER_CONFIRMED: { RspCode: '02', Message: 'Order already confirmed' },
-  INVALID_AMOUNT: { RspCode: '04', Message: 'Invalid Amount' },
+  INVALID_AMOUNT: { RspCode: '04', Message: 'Invalid amount' },
   UNKNOWN_ERROR: { RspCode: '99', Message: 'Unknown error' },
 };
