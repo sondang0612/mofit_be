@@ -230,13 +230,29 @@ export class OrdersService extends TypeOrmBaseService<Order> {
 
     const order = await this._findOneOrFail({
       where: whereCondition,
-      relations: ['user'],
+      relations: ['user', 'payment'],
     });
 
     return {
-      data: instanceToPlain(order),
+      data: {
+        ...instanceToPlain(order),
+        canCancel: this.canCancelOrder(order),
+      },
       message: 'Get Order Successfull!!',
     };
+  }
+
+  canCancelOrder(order: Order) {
+    if (order.status === EOrderStatus.CANCELED) return false;
+    const hoursSinceCreated = dayjs().diff(dayjs(order.createdAt), 'hour');
+
+    const isWithin24h = hoursSinceCreated < 24;
+    const isAfter24h = hoursSinceCreated >= 24;
+
+    const isPending = order.status === EOrderStatus.PENDING;
+    const isShipped = order.status === EOrderStatus.SHIPPED;
+
+    return (isWithin24h && isPending) || (isAfter24h && isShipped);
   }
 
   async findOrderTimeLine(id: number, user?: UserParams) {
@@ -275,5 +291,40 @@ export class OrdersService extends TypeOrmBaseService<Order> {
 
   remove(id: number) {
     return `This action removes a #${id} order`;
+  }
+
+  async cancelOrder(id: number, user: UserParams) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const order = (await queryRunner.manager.findOneOrFail(ETableName.ORDER, {
+        where: { id, user: { id: user.id, isDeleted: false } },
+        relations: ['payment'],
+      })) as any;
+
+      order.status = EOrderStatus.CANCELED;
+
+      if (order.payment?.status === EPaymentStatus.COMPLETED) {
+        order.payment.status = EPaymentStatus.REFUNDING;
+        await queryRunner.manager.save(ETableName.PAYMENT, order.payment);
+      }
+
+      await queryRunner.manager.save(ETableName.ORDER, order);
+
+      await queryRunner.commitTransaction();
+
+      return {
+        message: 'Cancel Order Successfully',
+      };
+    } catch (error) {
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
+      throw new Error(`Failed to cancel order: ${error.message}`);
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

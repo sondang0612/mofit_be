@@ -4,6 +4,7 @@ import { BaseEntity } from './base.entity';
 import { User } from './user.entity';
 import { Order } from './order.entity';
 import { EPaymentStatus } from 'src/common/constants/order.enum';
+import { Exclude } from 'class-transformer';
 
 @Entity(ETableName.PAYMENT)
 export class Payment extends BaseEntity {
@@ -24,6 +25,7 @@ export class Payment extends BaseEntity {
   @JoinColumn()
   order: Order;
 
+  @Exclude()
   @Column({ type: 'jsonb', nullable: true })
   details: Record<string, any>;
 }

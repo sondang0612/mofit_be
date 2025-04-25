@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { EApiPathName } from 'src/common/constants/api-path.enum';
 import { ERole } from 'src/common/constants/role.enum';
 import { ExtractUser, UserParams } from 'src/common/decorators/user.decorator';
@@ -27,6 +35,12 @@ export class OrdersController {
   @Permissions(ERole.ADMIN, ERole.USER)
   findOne(@ExtractUser() user: UserParams, @Param('id') id: string) {
     return this.ordersService.findOne(+id, user);
+  }
+
+  @Patch(':id')
+  @Permissions(ERole.USER)
+  cancelOrder(@ExtractUser() user: UserParams, @Param('id') id: string) {
+    return this.ordersService.cancelOrder(+id, user);
   }
 
   @Get(':id/timeline')

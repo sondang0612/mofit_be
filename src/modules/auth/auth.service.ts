@@ -187,11 +187,6 @@ export class AuthService {
   }
 
   async deleteLikeProduct(productId: number, user: UserParams) {
-    console.log({
-      user: { id: user.id },
-      product: { id: productId },
-    });
-
     await this.productLikeService.repository.delete({
       user: { id: user.id },
       product: { id: productId },
