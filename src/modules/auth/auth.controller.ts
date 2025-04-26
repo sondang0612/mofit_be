@@ -56,7 +56,7 @@ export class AuthController {
     return this.authService.getFavoriteProducts(user);
   }
 
-  @Post('/product/:productId/like')
+  @Post('product/:productId/like')
   @Permissions(ERole.USER)
   likeProduct(
     @ExtractUser() user: UserParams,
@@ -65,7 +65,16 @@ export class AuthController {
     return this.authService.likeProduct(productId, user);
   }
 
-  @Delete('/product/:productId/like')
+  @Get('product/:productId/like')
+  @Permissions(ERole.USER)
+  checkLikeProduct(
+    @ExtractUser() user: UserParams,
+    @Param('productId') productId: number,
+  ) {
+    return this.authService.checkLikeProduct(productId, user);
+  }
+
+  @Delete('product/:productId/like')
   @HttpCode(HttpStatus.NO_CONTENT)
   @Permissions(ERole.USER)
   unLikeProduct(

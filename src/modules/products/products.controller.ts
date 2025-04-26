@@ -19,6 +19,7 @@ export class ProductsController {
 
   @Get()
   @Auth(EAuth.NONE)
+  @Permissions(ERole.USER, ERole.ADMIN)
   findAll(@Query() productPaginationDto: ProductPaginationDto) {
     return this.productsService.findAll(productPaginationDto);
   }

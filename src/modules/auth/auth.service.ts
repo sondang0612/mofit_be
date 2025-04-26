@@ -194,4 +194,12 @@ export class AuthService {
 
     return null;
   }
+
+  async checkLikeProduct(productId: number, user: UserParams) {
+    const like = await this.productLikeService.repository.findOne({
+      where: { user: { id: user.id }, product: { id: productId } },
+    });
+
+    return { message: 'Get Liked Successful!', data: !!like };
+  }
 }

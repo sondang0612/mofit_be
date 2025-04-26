@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CartItem } from 'src/database/entities/cart-item.entity';
 import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
 import { Repository } from 'typeorm';
+import { UpdateCartItemDto } from './dto/update-cart-item.dto';
+import { UserParams } from 'src/common/decorators/user.decorator';
 
 @Injectable()
 export class CartItemsService extends TypeOrmBaseService<CartItem> {
@@ -58,6 +60,22 @@ export class CartItemsService extends TypeOrmBaseService<CartItem> {
 
     return {
       message: 'Add to cart successfully',
+    };
+  }
+
+  async update(args: UpdateCartItemDto, user: UserParams) {
+    const cartItem = await this._findOneOrFail({
+      where: {
+        user: { id: user.id, isDeleted: false },
+        product: { id: args.productId, isDeleted: false },
+      },
+    });
+
+    cartItem.quantity = args.quantity;
+    await this.cartItemsRepository.save(cartItem);
+
+    return {
+      message: 'Update cart successfully',
     };
   }
 }

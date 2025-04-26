@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { EApiPathName } from 'src/common/constants/api-path.enum';
@@ -13,6 +14,7 @@ import { ExtractUser, UserParams } from 'src/common/decorators/user.decorator';
 import { Permissions } from '../auth/guards/global-auth.guard';
 import { CartItemsService } from './cart-items.service';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
+import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 
 @Controller({ path: EApiPathName.CART_ITEMS })
 export class CartItemsController {
@@ -29,6 +31,15 @@ export class CartItemsController {
       userId: user?.id,
       userEmail: user?.email,
     });
+  }
+
+  @Patch()
+  @Permissions(ERole.USER)
+  update(
+    @ExtractUser() user: UserParams,
+    @Body() updateCartItemDto: UpdateCartItemDto,
+  ) {
+    return this.cartItemsService.update(updateCartItemDto, user);
   }
 
   @Delete('/:id')
