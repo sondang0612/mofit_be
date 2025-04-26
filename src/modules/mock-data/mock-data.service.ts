@@ -16,6 +16,8 @@ import { CategoriesService } from '../categories/categories.service';
 import { DiscountsService } from '../discounts/discounts.service';
 import { ProductsService } from '../products/products.service';
 import { UsersService } from '../users/users.service';
+import { ImagesService } from '../images/images.service';
+import { EImageTargetType } from 'src/common/constants/image-target-type.enum';
 
 @Injectable()
 export class MockDataService {
@@ -26,6 +28,7 @@ export class MockDataService {
     private readonly usersService: UsersService,
     private readonly discountsService: DiscountsService,
     private readonly brandService: BrandsService,
+    private readonly imagesService: ImagesService,
   ) {}
   async run() {
     try {
@@ -91,42 +94,48 @@ export class MockDataService {
     await this.usersService._createMany(hashedPasswordUsersData as any);
   }
   async importProducts() {
-    const products = await Promise.all(
-      productsData.map(async (product) => {
+    await Promise.all(
+      productsData.map(async (productData) => {
         let discount = null;
+
         const category = await this.categoriesService._findOne({
-          where: { name: product.categoryName },
+          where: { name: productData.categoryName },
         });
+
         const attributes = await this.attributesService.repository.findBy({
-          value: In(product.attributeValues),
+          value: In(productData.attributeValues),
           isDeleted: false,
         });
 
-        if (product?.discountPercentage) {
+        if (productData?.discountPercentage) {
           discount = await this.discountsService._findOne({
-            where: { percentage: product?.discountPercentage },
+            where: { percentage: productData?.discountPercentage },
           });
         }
 
         const brand = await this.brandService._findOne({
-          where: { name: product?.brandName },
+          where: { name: productData?.brandName },
         });
 
-        return {
-          ...product,
+        const createdProduct = await this.productsService.repository.save({
+          ...productData,
           category,
           attributes,
           brand,
-          slug: slug(product.title),
-          ...(discount
-            ? {
-                discount,
-              }
-            : {}),
-        };
+          slug: slug(productData.title),
+          ...(discount ? { discount } : {}),
+        });
+
+        const images = productData.images.map((item) => ({
+          targetType: EImageTargetType.PRODUCT,
+          url: item,
+          targetId: createdProduct.id,
+        }));
+
+        await this.imagesService._createMany(images);
+
+        return createdProduct;
       }),
     );
-
-    await this.productsService._createMany(products as any);
   }
 }

@@ -7,6 +7,7 @@ import { MockDataController } from './mock-data.controller';
 import { MockDataService } from './mock-data.service';
 import { DiscountsModule } from '../discounts/discounts.module';
 import { BrandsModule } from '../brands/brands.module';
+import { ImagesModule } from '../images/images.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { BrandsModule } from '../brands/brands.module';
     UsersModule,
     DiscountsModule,
     BrandsModule,
+    ImagesModule,
   ],
   controllers: [MockDataController],
   providers: [MockDataService],

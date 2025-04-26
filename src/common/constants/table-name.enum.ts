@@ -15,4 +15,5 @@ export enum ETableName {
   BRAND = 'brands',
   CONTACT = 'contacts',
   PRODUCT_LIKE = 'product-like',
+  IMAGES = 'images',
 }

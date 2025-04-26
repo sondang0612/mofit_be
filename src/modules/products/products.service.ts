@@ -8,29 +8,58 @@ import { Repository } from 'typeorm';
 import { CategoriesService } from '../categories/categories.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductPaginationDto } from './dto/product-pagination.dto';
+import { EImageTargetType } from 'src/common/constants/image-target-type.enum';
+import { Image } from 'src/database/entities/image.entity';
+import { ImagesService } from '../images/images.service';
+import { slug } from 'src/common/utils/slug';
 @Injectable()
 export class ProductsService extends TypeOrmBaseService<Product> {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
     private readonly categoriesService: CategoriesService,
+    private readonly imagesService: ImagesService,
   ) {
     super(productRepository);
   }
 
   async create(createProductDto: CreateProductDto) {
-    const categories = await this.categoriesService._findByIdsOrFail(
-      createProductDto.categoryIds,
-    );
+    const {
+      brandId,
+      categoryId,
+      price,
+      title,
+      attributeIds,
+      description,
+      discountId,
+      shortDescription,
+      sku,
+      images,
+    } = createProductDto;
 
     const product = await this._create({
-      ...createProductDto,
-      categories,
+      brand: { id: brandId },
+      category: { id: categoryId },
+      price,
+      title,
+      attributes: attributeIds.map((item) => ({ id: item })),
+      description,
+      discount: { id: discountId },
+      shortDescription,
+      sku,
+      slug: slug(title),
     });
+
+    await this.imagesService._createMany(
+      images?.map((image) => ({
+        url: image,
+        targetId: product.id,
+        targetType: EImageTargetType.PRODUCT,
+      })),
+    );
 
     return {
       message: 'Product created successfully!',
-      data: product,
     };
   }
 
@@ -52,7 +81,14 @@ export class ProductsService extends TypeOrmBaseService<Product> {
       .leftJoinAndSelect(`${this.entityName}.attributes`, 'attributes')
       .leftJoinAndSelect(`${this.entityName}.category`, 'category')
       .leftJoinAndSelect(`${this.entityName}.discount`, 'discount')
-      .leftJoinAndSelect(`${this.entityName}.brand`, 'brand');
+      .leftJoinAndSelect(`${this.entityName}.brand`, 'brand')
+      .leftJoinAndMapMany(
+        `${this.entityName}.images`,
+        Image,
+        'images',
+        `images.targetId = ${this.entityName}.id AND images.targetType = :targetType`,
+        { targetType: EImageTargetType.PRODUCT },
+      );
 
     switch (attributeValue) {
       case undefined:
@@ -126,12 +162,16 @@ export class ProductsService extends TypeOrmBaseService<Product> {
   }
 
   async findOne(slug: string) {
-    const product = await this._findOne({
+    const product = await this._findOneOrFail({
       where: { slug },
       relations: ['category', 'attributes', 'discount', 'brand'],
     });
+
+    const images = await this.imagesService.repository.find({
+      where: { targetId: product.id },
+    });
     return {
-      data: instanceToPlain(product),
+      data: { ...instanceToPlain(product), images: instanceToPlain(images) },
       message: 'Get product successfully!',
     };
   }
