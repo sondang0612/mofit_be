@@ -162,7 +162,12 @@ export class AuthService {
   async getFavoriteProducts(args: UserParams) {
     const favoriteProducts = await this.productLikeService.repository.find({
       where: { user: { id: args.id, isDeleted: false }, isDeleted: false },
-      relations: ['product'],
+      relations: [
+        'product',
+        'product.brand',
+        'product.attributes',
+        'product.discount',
+      ],
     });
     return {
       data: instanceToPlain(favoriteProducts),
