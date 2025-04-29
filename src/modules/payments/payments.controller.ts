@@ -18,12 +18,12 @@ export class PaymentsController {
     return this.paymentsService.processPaymentIpnCallback(args);
   }
 
-  @Post('vnpay_refund')
-  @Permissions(ERole.USER)
+  @Post('refund')
+  @Permissions(ERole.ADMIN)
   handleVnpayRefund(
     @Body() args: PaymentRefundDto,
     @ExtractUser() user: UserParams,
   ) {
-    return this.paymentsService.handleVnpayRefund(args, user);
+    return this.paymentsService.handleRefund(args, user.ip);
   }
 }

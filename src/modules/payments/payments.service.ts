@@ -10,7 +10,11 @@ import * as crypto from 'crypto';
 import * as dayjs from 'dayjs';
 import * as qs from 'qs';
 import { EEnv } from 'src/common/constants/env.enum';
-import { EOrderStatus, EPaymentStatus } from 'src/common/constants/order.enum';
+import {
+  EOrderStatus,
+  EPaymentMethod,
+  EPaymentStatus,
+} from 'src/common/constants/order.enum';
 import { ETableName } from 'src/common/constants/table-name.enum';
 import {
   EVnpayResponseCode,
@@ -27,7 +31,6 @@ import { DataSource, In, Repository } from 'typeorm';
 import { OrdersService } from '../orders/orders.service';
 import { PaymentRefundDto } from './dto/payment-refund.dto';
 import { VnpayIpnDto } from './dto/vnpay.dto';
-import { UserParams } from 'src/common/decorators/user.decorator';
 @Injectable()
 export class PaymentsService extends TypeOrmBaseService<Payment> {
   constructor(
@@ -256,95 +259,113 @@ export class PaymentsService extends TypeOrmBaseService<Payment> {
     return expectedHash === receivedHash && tmnCode === vnpayIpnDto.vnp_TmnCode;
   }
 
-  async handleVnpayRefund(args: PaymentRefundDto, user: UserParams) {
+  async handleRefund(args: PaymentRefundDto, ip: string) {
     const { orderId } = args;
-    const version = this.configService.get<string>(
-      EEnv.PAYMENT_GATEWAY_VERSION,
-    );
-    const tmnCode = this.configService.get<string>(EEnv.TMN_CODE);
-    const refundUrl = this.configService.get<string>(
-      EEnv.PAYMENT_GATEWAY_REFUND_URL,
-    );
-    const secretKey = this.configService.get<string>(EEnv.SECRET_KEY);
-
+    let responseData;
     const order = await this.ordersService._findOneOrFail({
-      where: { id: orderId, user: { id: user.id } },
-      relations: ['payment'],
+      where: { id: orderId },
+      relations: ['payment', 'user'],
     });
 
-    const vnp_RequestId = dayjs().format('HHmmss');
-    const vnp_Version = version;
-    const vnp_Command = 'refund';
-    const vnp_TmnCode = tmnCode;
-    const vnp_TransactionType = '02';
-    const vnp_TxnRef = order.txnRef;
-    const vnp_Amount = `${order?.payment?.details?.paymentAmount * 100}`;
-    const vnp_TransactionNo = order?.payment?.details?.transactionID;
-    const vnp_TransactionDate = order?.payment?.details?.paidAt;
-    const vnp_CreateBy = user.username;
-    const vnp_CreateDate = dayjs().format('YYYYMMDDHHmmss');
-    const vnp_IpAddr = user.ip;
-    const vnp_OrderInfo = `Hoan tien GD ma:${order.txnRef}`;
+    if (order.paymentMethod === EPaymentMethod.PAYMENT_GATEWAY) {
+      const version = this.configService.get<string>(
+        EEnv.PAYMENT_GATEWAY_VERSION,
+      );
+      const tmnCode = this.configService.get<string>(EEnv.TMN_CODE);
+      const refundUrl = this.configService.get<string>(
+        EEnv.PAYMENT_GATEWAY_REFUND_URL,
+      );
+      const secretKey = this.configService.get<string>(EEnv.SECRET_KEY);
 
-    const data =
-      vnp_RequestId +
-      '|' +
-      vnp_Version +
-      '|' +
-      vnp_Command +
-      '|' +
-      vnp_TmnCode +
-      '|' +
-      vnp_TransactionType +
-      '|' +
-      vnp_TxnRef +
-      '|' +
-      vnp_Amount +
-      '|' +
-      vnp_TransactionNo +
-      '|' +
-      vnp_TransactionDate +
-      '|' +
-      vnp_CreateBy +
-      '|' +
-      vnp_CreateDate +
-      '|' +
-      vnp_IpAddr +
-      '|' +
-      vnp_OrderInfo;
-    const hmac = crypto.createHmac('sha512', secretKey);
-    const vnp_SecureHash = hmac.update(new Buffer(data, 'utf-8')).digest('hex');
+      const user = order.user;
 
-    const vnp_Params: Record<string, any> = {
-      vnp_RequestId,
-      vnp_Version,
-      vnp_Command,
-      vnp_TmnCode,
-      vnp_TransactionType,
-      vnp_TxnRef,
-      vnp_Amount,
-      vnp_TransactionNo,
-      vnp_TransactionDate,
-      vnp_CreateBy,
-      vnp_CreateDate,
-      vnp_IpAddr,
-      vnp_OrderInfo,
-      vnp_SecureHash,
-    };
+      const vnp_RequestId = dayjs().format('HHmmss');
+      const vnp_Version = version;
+      const vnp_Command = 'refund';
+      const vnp_TmnCode = tmnCode;
+      const vnp_TransactionType = '02';
+      const vnp_TxnRef = order.txnRef;
+      const vnp_Amount = `${order?.payment?.details?.paymentAmount * 100}`;
+      const vnp_TransactionNo = order?.payment?.details?.transactionID;
+      const vnp_TransactionDate = order?.payment?.details?.paidAt;
+      const vnp_CreateBy = user.username;
+      const vnp_CreateDate = dayjs().format('YYYYMMDDHHmmss');
+      const vnp_IpAddr = ip;
+      const vnp_OrderInfo = `Hoan tien GD ma:${order.txnRef}`;
 
-    const res = await fetch(refundUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(vnp_Params),
-    });
+      const data =
+        vnp_RequestId +
+        '|' +
+        vnp_Version +
+        '|' +
+        vnp_Command +
+        '|' +
+        vnp_TmnCode +
+        '|' +
+        vnp_TransactionType +
+        '|' +
+        vnp_TxnRef +
+        '|' +
+        vnp_Amount +
+        '|' +
+        vnp_TransactionNo +
+        '|' +
+        vnp_TransactionDate +
+        '|' +
+        vnp_CreateBy +
+        '|' +
+        vnp_CreateDate +
+        '|' +
+        vnp_IpAddr +
+        '|' +
+        vnp_OrderInfo;
+      const hmac = crypto.createHmac('sha512', secretKey);
+      const vnp_SecureHash = hmac
+        .update(new Buffer(data, 'utf-8'))
+        .digest('hex');
 
-    const responseData = await res.json();
+      const vnp_Params: Record<string, any> = {
+        vnp_RequestId,
+        vnp_Version,
+        vnp_Command,
+        vnp_TmnCode,
+        vnp_TransactionType,
+        vnp_TxnRef,
+        vnp_Amount,
+        vnp_TransactionNo,
+        vnp_TransactionDate,
+        vnp_CreateBy,
+        vnp_CreateDate,
+        vnp_IpAddr,
+        vnp_OrderInfo,
+        vnp_SecureHash,
+      };
 
-    return {
-      vnp_Params,
-      responseData,
-    };
+      const res = await fetch(refundUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(vnp_Params),
+      });
+
+      responseData = await res.json();
+      if (responseData.vnp_ResponseCode === '94') {
+        responseData.vnp_ResponseCode = '00';
+      }
+    } else {
+      responseData = { vnp_ResponseCode: '00' };
+    }
+
+    if (responseData?.vnp_ResponseCode === '00') {
+      await this.paymentsRepository.update(order.payment.id, {
+        status: EPaymentStatus.REFUNDED,
+      });
+      return {
+        message: 'Refund Successful!!',
+      };
+    }
+
+    throw new BadRequestException('Refund fail!!');
   }
 }

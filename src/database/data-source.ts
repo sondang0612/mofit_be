@@ -15,6 +15,7 @@ export const dataSourceOptions: DataSourceOptions = {
   password: configService.get(EEnv.DB_PASSWORD),
   database: configService.get<string>(EEnv.DB_NAME),
   synchronize: true,
+  migrationsRun: true,
   entities: [__dirname + '/entities/*.entity.{ts,js}'],
   migrations: [__dirname + '/migrations/*.{ts,js}'],
 };

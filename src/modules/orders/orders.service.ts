@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { instanceToPlain } from 'class-transformer';
 import * as dayjs from 'dayjs';
 import {
   EOrderStatus,
@@ -11,12 +12,17 @@ import { ETableName } from 'src/common/constants/table-name.enum';
 import { UserParams } from 'src/common/decorators/user.decorator';
 import { Order } from 'src/database/entities/order.entity';
 import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
-import { DataSource, FindOptionsWhere, In, Repository } from 'typeorm';
+import {
+  Brackets,
+  DataSource,
+  FindOptionsWhere,
+  In,
+  Repository,
+} from 'typeorm';
+import { OrderStatusLogsService } from '../order-status-logs/order-status-logs.service';
 import { PaymentsService } from '../payments/payments.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderPaginationDto } from './dto/order-pagination.dto';
-import { instanceToPlain } from 'class-transformer';
-import { OrderStatusLogsService } from '../order-status-logs/order-status-logs.service';
 
 @Injectable()
 export class OrdersService extends TypeOrmBaseService<Order> {
@@ -164,7 +170,11 @@ export class OrdersService extends TypeOrmBaseService<Order> {
     const queryBuilder = this.ordersRepository
       .createQueryBuilder(this.entityName)
       .leftJoinAndSelect(`${this.entityName}.user`, 'user')
-      .leftJoinAndSelect(`${this.entityName}.orderItems`, 'orderItems');
+      .leftJoinAndSelect(`${this.entityName}.orderItems`, 'orderItems')
+      .leftJoinAndSelect(`${this.entityName}.payment`, 'payment')
+      .andWhere(`${this.entityName}.status != :excludedStatus`, {
+        excludedStatus: EOrderStatus.DRAFT,
+      });
 
     if (user?.id) {
       queryBuilder.andWhere(`${this.entityName}.userId = :userId`, {
@@ -265,7 +275,13 @@ export class OrdersService extends TypeOrmBaseService<Order> {
       .select('log.currentStatus', 'status')
       .addSelect('MAX(log.time)', 'latestTime')
       .where('log.orderId = :orderId', { orderId: id })
-      .andWhere('user.id = :userId', { userId: user.id })
+      .andWhere(
+        new Brackets((qb) => {
+          if (user?.role === ERole.USER) {
+            qb.where('user.id = :userId', { userId: user.id });
+          }
+        }),
+      )
       .andWhere('log.isDeleted = false')
       .andWhere('log.currentStatus IN (:...statuses)', {
         statuses: allStatuses,
@@ -326,5 +342,19 @@ export class OrdersService extends TypeOrmBaseService<Order> {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async updateOrderStatus(id: number, status: EOrderStatus) {
+    const order = await this._findOneOrFail({
+      where: { id, isDeleted: false },
+    });
+
+    order.status = status;
+
+    await this.ordersRepository.save(order);
+
+    return {
+      message: 'Update Order Successful!!',
+    };
   }
 }

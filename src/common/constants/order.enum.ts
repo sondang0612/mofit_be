@@ -8,6 +8,11 @@ export enum EOrderStatus {
   RETURNED = 'returned',
 }
 
+export type EOrderStatusWithoutDraftAndCanceled = Exclude<
+  EOrderStatus,
+  EOrderStatus.DRAFT | EOrderStatus.CANCELED
+>;
+
 export enum EShippingMethod {
   OWN_DELIVERY = 'own_delivery',
 }

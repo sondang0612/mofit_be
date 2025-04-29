@@ -8,6 +8,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { EApiPathName } from 'src/common/constants/api-path.enum';
+import { EOrderStatusWithoutDraftAndCanceled } from 'src/common/constants/order.enum';
 import { ERole } from 'src/common/constants/role.enum';
 import { ExtractUser, UserParams } from 'src/common/decorators/user.decorator';
 import { Permissions } from '../auth/guards/global-auth.guard';
@@ -41,6 +42,15 @@ export class OrdersController {
   @Permissions(ERole.USER)
   cancelOrder(@ExtractUser() user: UserParams, @Param('id') id: string) {
     return this.ordersService.cancelOrder(+id, user);
+  }
+
+  @Patch('/status/:id')
+  @Permissions(ERole.ADMIN)
+  updateOrderStatus(
+    @Param('id') id: string,
+    @Query('status') status: EOrderStatusWithoutDraftAndCanceled,
+  ) {
+    return this.ordersService.updateOrderStatus(+id, status);
   }
 
   @Get(':id/timeline')
