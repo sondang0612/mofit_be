@@ -1,12 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { EOrderStatus } from 'src/common/constants/order.enum';
+import { EUserDeleteRequestStatus } from 'src/common/constants/user-delete-request-status.enum';
+import { UserParams } from 'src/common/decorators/user.decorator';
 import { User } from 'src/database/entities/user.entity';
 import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ProductPagination } from './dto/product-pagination.dto';
-import { UserParams } from 'src/common/decorators/user.decorator';
-import { EUserDeleteRequestStatus } from 'src/common/constants/user-delete-request-status.enum';
+import { UserPagination } from './dto/user-pagination.dto';
 
 @Injectable()
 export class UsersService extends TypeOrmBaseService<User> {
@@ -37,11 +38,34 @@ export class UsersService extends TypeOrmBaseService<User> {
     };
   }
 
-  async findAll(args: ProductPagination) {
-    const { limit, page, sort, sortBy } = args;
-    const queryBuilder = this.userRepository.createQueryBuilder(
-      this.entityName,
-    );
+  async findAll(args: UserPagination) {
+    const { limit, page, sort, sortBy, role, q } = args;
+
+    const queryBuilder = this.userRepository
+      .createQueryBuilder(this.entityName)
+      .loadRelationCountAndMap(
+        `${this.entityName}.orderCount`,
+        `${this.entityName}.orders`,
+        'order',
+        (qb) =>
+          qb.where('order.status != :status', { status: EOrderStatus.DRAFT }),
+      );
+
+    if (role) {
+      queryBuilder.andWhere(`${this.entityName}.role = :role`, { role });
+    }
+
+    if (q) {
+      queryBuilder.andWhere(
+        `(
+          ${this.entityName}.firstName LIKE :q OR
+          ${this.entityName}.lastName LIKE :q OR
+          ${this.entityName}.phoneNumber LIKE :q OR
+          ${this.entityName}.email LIKE :q
+        )`,
+        { q: `%${q}%` },
+      );
+    }
 
     const data = await this._findAll(queryBuilder, {
       limit,

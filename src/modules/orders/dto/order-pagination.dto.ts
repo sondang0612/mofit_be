@@ -22,4 +22,8 @@ export class OrderPaginationDto extends PaginationDto {
   @IsOptional()
   @IsString()
   orderId?: string;
+
+  @IsOptional()
+  @IsString()
+  q?: string;
 }

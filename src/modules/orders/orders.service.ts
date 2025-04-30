@@ -164,8 +164,17 @@ export class OrdersService extends TypeOrmBaseService<Order> {
   }
 
   async findAll(args: OrderPaginationDto, user?: UserParams) {
-    const { limit, page, sortBy, sort, txnRef, status, orderId, productTitle } =
-      args;
+    const {
+      limit,
+      page,
+      sortBy,
+      sort,
+      txnRef,
+      status,
+      orderId,
+      productTitle,
+      q,
+    } = args;
 
     const queryBuilder = this.ordersRepository
       .createQueryBuilder(this.entityName)
@@ -207,6 +216,23 @@ export class OrdersService extends TypeOrmBaseService<Order> {
           productTitle: `%${productTitle}%`,
         },
       );
+    }
+
+    if (q) {
+      const isNumeric = !isNaN(Number(q));
+
+      if (isNumeric) {
+        queryBuilder.andWhere(`orderItems.orderId = :orderId`, {
+          orderId: Number(q),
+        });
+      } else {
+        queryBuilder.andWhere(
+          `orderItems.product ->> 'title' ILIKE :productTitle`,
+          {
+            productTitle: `%${q}%`,
+          },
+        );
+      }
     }
 
     const data = await this._findAll(queryBuilder, {

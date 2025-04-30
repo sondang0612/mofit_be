@@ -12,7 +12,6 @@ export abstract class BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Exclude()
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 

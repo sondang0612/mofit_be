@@ -4,7 +4,7 @@ import { ERole } from 'src/common/constants/role.enum';
 import { ExtractUser, UserParams } from 'src/common/decorators/user.decorator';
 import { Permissions } from '../auth/guards/global-auth.guard';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ProductPagination } from './dto/product-pagination.dto';
+import { UserPagination } from './dto/user-pagination.dto';
 import { UsersService } from './users.service';
 
 @Controller({ path: EApiPathName.USERS })
@@ -24,7 +24,7 @@ export class UsersController {
 
   @Get()
   @Permissions(ERole.ADMIN)
-  findAll(@Query() productPagination: ProductPagination) {
-    return this.usersService.findAll(productPagination);
+  findAll(@Query() userPagination: UserPagination) {
+    return this.usersService.findAll(userPagination);
   }
 }

@@ -64,14 +64,16 @@ export class TypeOrmBaseService<TEntity extends BaseEntity> {
       page = 1,
       limit = 10,
       sort,
+      isDeleted = false,
     }: {
       page?: number;
       limit?: number;
+      isDeleted?: boolean;
       sort?: { field: string; order: SortOrder };
     },
   ): Promise<{ data: TEntity[]; total: number }> {
     queryBuilder.andWhere(`${this.entityName}.isDeleted = :isDeleted`, {
-      isDeleted: false,
+      isDeleted,
     });
 
     if (sort && sort.field) {
