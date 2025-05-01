@@ -167,6 +167,7 @@ export class AuthService {
         'product.brand',
         'product.attributes',
         'product.discount',
+        'product.category',
       ],
     });
     return {

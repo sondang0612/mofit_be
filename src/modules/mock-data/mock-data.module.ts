@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AttributesModule } from '../attributes/attributes.module';
+import { BrandsModule } from '../brands/brands.module';
 import { CategoriesModule } from '../categories/categories.module';
+import { DiscountsModule } from '../discounts/discounts.module';
 import { ProductsModule } from '../products/products.module';
 import { UsersModule } from '../users/users.module';
 import { MockDataController } from './mock-data.controller';
 import { MockDataService } from './mock-data.service';
-import { DiscountsModule } from '../discounts/discounts.module';
-import { BrandsModule } from '../brands/brands.module';
-import { ImagesModule } from '../images/images.module';
 
 @Module({
   imports: [
@@ -17,7 +16,6 @@ import { ImagesModule } from '../images/images.module';
     UsersModule,
     DiscountsModule,
     BrandsModule,
-    ImagesModule,
   ],
   controllers: [MockDataController],
   providers: [MockDataService],

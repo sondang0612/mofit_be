@@ -37,6 +37,15 @@ export class Product extends BaseEntity {
   @Column({ type: 'varchar', length: 255, nullable: true })
   sku: string;
 
+  @Column({ type: 'varchar', length: 255 })
+  origin: string;
+
+  @Column({ type: 'varchar', length: 255 })
+  specifications: string;
+
+  @Column({ type: 'jsonb' })
+  images: Record<string, any>; // cover and normal
+
   @Column({
     nullable: true,
     type: 'decimal',
@@ -53,7 +62,6 @@ export class Product extends BaseEntity {
   @ManyToMany(() => Attribute, (attribute) => attribute.products)
   @JoinTable({
     name: 'product_attributes',
-    joinColumn: { name: 'product_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'attribute_id', referencedColumnName: 'id' },
   })
   attributes: Attribute[];

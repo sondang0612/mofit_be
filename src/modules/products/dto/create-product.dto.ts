@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsArray,
   IsNotEmpty,
@@ -11,8 +12,9 @@ export class CreateProductDto {
   @IsNotEmpty()
   title: string;
 
-  @IsNumber()
   @IsNotEmpty()
+  @IsNumber()
+  @Type(() => Number)
   price: number;
 
   @IsString()
@@ -33,6 +35,7 @@ export class CreateProductDto {
 
   @IsNumber()
   @IsNotEmpty()
+  @Type(() => Number)
   categoryId: number;
 
   @IsArray()
@@ -41,9 +44,19 @@ export class CreateProductDto {
 
   @IsNumber()
   @IsOptional()
+  @Type(() => Number)
   discountId?: number;
 
   @IsNumber()
   @IsNotEmpty()
+  @Type(() => Number)
   brandId: number;
+
+  @IsString()
+  @IsOptional()
+  specifications?: string;
+
+  @IsString()
+  @IsOptional()
+  origin?: string;
 }

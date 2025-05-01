@@ -16,8 +16,6 @@ import { CategoriesService } from '../categories/categories.service';
 import { DiscountsService } from '../discounts/discounts.service';
 import { ProductsService } from '../products/products.service';
 import { UsersService } from '../users/users.service';
-import { ImagesService } from '../images/images.service';
-import { EImageTargetType } from 'src/common/constants/image-target-type.enum';
 
 @Injectable()
 export class MockDataService {
@@ -28,17 +26,16 @@ export class MockDataService {
     private readonly usersService: UsersService,
     private readonly discountsService: DiscountsService,
     private readonly brandService: BrandsService,
-    private readonly imagesService: ImagesService,
   ) {}
   async run() {
     try {
-      await this.importCategories();
+      // await this.importCategories();
       await this.importBrands();
-      await this.importDiscounts();
+      // await this.importDiscounts();
       await this.importAttributes();
-      await this.importProducts();
-      await this.importProducts();
-      await this.importProducts();
+      // await this.importProducts();
+      // await this.importProducts();
+      // await this.importProducts();
       await this.importUsersData();
 
       return {
@@ -125,14 +122,6 @@ export class MockDataService {
           slug: slug(productData.title),
           ...(discount ? { discount } : {}),
         });
-
-        const images = productData.images.map((item) => ({
-          targetType: EImageTargetType.PRODUCT,
-          url: item,
-          targetId: createdProduct.id,
-        }));
-
-        await this.imagesService._createMany(images);
 
         return createdProduct;
       }),
