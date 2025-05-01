@@ -14,7 +14,12 @@ async function bootstrap() {
   app.use(helmet());
 
   app.enableCors({
-    origin: ['http://localhost:8080', 'http://localhost:4000'],
+    origin: [
+      'http://localhost:8080',
+      'http://localhost:4000',
+      'https://doublefish.com.vn',
+      'https://mofit-dashboard.vercel.app',
+    ],
     credentials: true,
     exposedHeaders: ['Content-Disposition'],
   });
