@@ -40,7 +40,7 @@ export class Product extends BaseEntity {
   @Column({ type: 'varchar', length: 255 })
   origin: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', nullable: true })
   specifications: string;
 
   @Column({ type: 'jsonb' })
