@@ -30,7 +30,7 @@ async function bootstrap() {
 
   app.use(express.json({ limit: '10kb' }));
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   await app.listen(PORT, () => {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;

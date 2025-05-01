@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { ETableName } from 'src/common/constants/table-name.enum';
 import {
   Column,
@@ -8,12 +9,11 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { BaseEntity } from './base.entity';
-import { Category } from './category.entity';
 import { Attribute } from './attribute.entity';
-import { Discount } from './discount.entity';
+import { BaseEntity } from './base.entity';
 import { Brand } from './brand.entity';
-import { Transform } from 'class-transformer';
+import { Category } from './category.entity';
+import { Discount } from './discount.entity';
 import { ProductLike } from './product-like.entity';
 
 @Entity(ETableName.PRODUCT)
@@ -29,12 +29,6 @@ export class Product extends BaseEntity {
   price: number;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  imgSrc: string;
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  imgSrc2: string;
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
   shortDescription: string;
 
   @Column({ type: 'text', nullable: true })
@@ -42,6 +36,15 @@ export class Product extends BaseEntity {
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   sku: string;
+
+  @Column({ type: 'varchar', length: 255 })
+  origin: string;
+
+  @Column({ type: 'varchar', length: 255 })
+  specifications: string;
+
+  @Column({ type: 'jsonb' })
+  images: Record<string, any>; // cover and normal
 
   @Column({
     nullable: true,
@@ -59,7 +62,6 @@ export class Product extends BaseEntity {
   @ManyToMany(() => Attribute, (attribute) => attribute.products)
   @JoinTable({
     name: 'product_attributes',
-    joinColumn: { name: 'product_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'attribute_id', referencedColumnName: 'id' },
   })
   attributes: Attribute[];

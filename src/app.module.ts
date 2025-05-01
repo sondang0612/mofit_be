@@ -19,9 +19,9 @@ import { OrderItemsModule } from './modules/order-items/order-items.module';
 import { OrderStatusLogsModule } from './modules/order-status-logs/order-status-logs.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { PaymentsModule } from './modules/payments/payments.module';
+import { ProductLikeModule } from './modules/product-like/product-like.module';
 import { ProductsModule } from './modules/products/products.module';
 import { UsersModule } from './modules/users/users.module';
-import { ProductLikeModule } from './modules/product-like/product-like.module';
 
 @Module({
   imports: [

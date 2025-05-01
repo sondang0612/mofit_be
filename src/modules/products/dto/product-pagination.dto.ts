@@ -26,4 +26,8 @@ export class ProductPaginationDto extends PaginationDto {
   @IsOptional()
   @IsString()
   searchQuery?: string;
+
+  @IsOptional()
+  @IsString()
+  q?: string;
 }

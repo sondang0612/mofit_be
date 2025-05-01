@@ -29,13 +29,13 @@ export class MockDataService {
   ) {}
   async run() {
     try {
-      await this.importCategories();
+      // await this.importCategories();
       await this.importBrands();
-      await this.importDiscounts();
+      // await this.importDiscounts();
       await this.importAttributes();
-      await this.importProducts();
-      await this.importProducts();
-      await this.importProducts();
+      // await this.importProducts();
+      // await this.importProducts();
+      // await this.importProducts();
       await this.importUsersData();
 
       return {
@@ -91,42 +91,40 @@ export class MockDataService {
     await this.usersService._createMany(hashedPasswordUsersData as any);
   }
   async importProducts() {
-    const products = await Promise.all(
-      productsData.map(async (product) => {
+    await Promise.all(
+      productsData.map(async (productData) => {
         let discount = null;
+
         const category = await this.categoriesService._findOne({
-          where: { name: product.categoryName },
+          where: { name: productData.categoryName },
         });
+
         const attributes = await this.attributesService.repository.findBy({
-          value: In(product.attributeValues),
+          value: In(productData.attributeValues),
           isDeleted: false,
         });
 
-        if (product?.discountPercentage) {
+        if (productData?.discountPercentage) {
           discount = await this.discountsService._findOne({
-            where: { percentage: product?.discountPercentage },
+            where: { percentage: productData?.discountPercentage },
           });
         }
 
         const brand = await this.brandService._findOne({
-          where: { name: product?.brandName },
+          where: { name: productData?.brandName },
         });
 
-        return {
-          ...product,
+        const createdProduct = await this.productsService.repository.save({
+          ...productData,
           category,
           attributes,
           brand,
-          slug: slug(product.title),
-          ...(discount
-            ? {
-                discount,
-              }
-            : {}),
-        };
+          slug: slug(productData.title),
+          ...(discount ? { discount } : {}),
+        });
+
+        return createdProduct;
       }),
     );
-
-    await this.productsService._createMany(products as any);
   }
 }
