@@ -29,11 +29,11 @@ export class MockDataService {
   ) {}
   async run() {
     try {
-      // await this.importCategories();
+      await this.importCategories();
       await this.importBrands();
       // await this.importDiscounts();
       await this.importAttributes();
-      // await this.importProducts();
+      await this.importProducts();
       // await this.importProducts();
       // await this.importProducts();
       await this.importUsersData();

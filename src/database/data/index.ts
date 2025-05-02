@@ -99,12 +99,13 @@ export const productsData = [
     attributeValues: ['new_arrivals', 'featured'],
     title: 'Vợt Pickleball DFPK-1104',
     price: 58000000,
-    images: [
-      '/assets/images/products/pickleball-DFPK-1104-min.png',
-      '/assets/images/products/pickleball-DFPK-1104-min.png',
-    ],
+    images: {
+      cover: '/assets/images/products/pickleball-DFPK-1104-min.png',
+      other: ['/assets/images/products/pickleball-DFPK-1104-min.png'],
+    },
     ratings: 5,
     discountPercentage: 15,
+    origin: 'Trung Quốc',
     shortDescription:
       'Vợt pickleball cao cấp dành cho vận động viên chuyên nghiệp, thiết kế tối ưu cho độ bền và hiệu suất.',
     description:
@@ -118,10 +119,12 @@ export const productsData = [
     attributeValues: ['new_arrivals'],
     title: 'Vợt Pickleball DFPK-6101',
     price: 2100000,
-    images: [
-      '/assets/images/products/pickleball-DFPK-6101-min.png',
-      '/assets/images/products/pickleball-DFPK-6101-min.png',
-    ],
+    images: {
+      cover: '/assets/images/products/pickleball-DFPK-6101-min.png',
+      other: ['/assets/images/products/pickleball-DFPK-6101-min.png'],
+    },
+    origin: 'Trung Quốc',
+
     ratings: 4.5,
     shortDescription:
       'Vợt pickleball tiêu chuẩn với thiết kế nhẹ, dễ kiểm soát, phù hợp với người chơi ở mọi cấp độ.',
@@ -133,71 +136,20 @@ export const productsData = [
     sku: 'DF-233-WTT',
     categoryName: 'Bàn',
     brandName: 'Double Fish',
+
     attributeValues: ['best_seller', 'featured'],
     title: 'Bàn Bóng Bàn Double Fish 233 WTT Limited Seagame 31',
     price: 24800000,
-    images: [
-      '/assets/images/products/ban-bong-ban-double-fish-233.jpg',
-      '/assets/images/products/ban-bong-ban-double-fish-233.jpg',
-    ],
+    images: {
+      cover: '/assets/images/products/ban-bong-ban-double-fish-233.jpg',
+      other: ['/assets/images/products/ban-bong-ban-double-fish-233.jpg'],
+    },
+
     ratings: 3,
     discountPercentage: 15,
+    origin: 'Trung Quốc',
     shortDescription:
       'Bàn bóng bàn cao cấp chuẩn thi đấu quốc tế, sử dụng trong SEA Games 31 với độ bền và chất lượng vượt trội.',
-    description:
-      "<h4 class=''>1. <strong>Thiết kế và chất liệu cao cấp</strong></h4><p class=''>Vợt pickleball được chế tạo từ chất liệu [carbon fiber / composite / gỗ cao cấp], giúp tăng độ bền, giảm trọng lượng và tối ưu lực đánh. Bề mặt vợt có kết cấu đặc biệt giúp kiểm soát bóng tốt hơn, mang đến độ xoáy và độ chính xác cao trong từng cú đánh.</p><h4 class=''>2. <strong>Hiệu suất vượt trội</strong></h4><p class=''>Với trọng lượng lý tưởng [số gram], vợt đảm bảo sự cân bằng hoàn hảo giữa sức mạnh và sự linh hoạt, phù hợp cho cả người chơi mới lẫn vận động viên chuyên nghiệp. Tay cầm được thiết kế công thái học với lớp bọc chống trượt, giúp người chơi duy trì sự thoải mái trong suốt trận đấu.</p><h4 class=''>3. <strong>Ứng dụng và lợi ích</strong></h4><h4>Dòng vợt này phù hợp cho nhiều phong cách chơi, từ tấn công mạnh mẽ đến phòng thủ linh hoạt. Công nghệ giảm chấn giúp giảm rung chấn khi tiếp xúc bóng, bảo vệ cổ tay và khuỷu tay, giúp người chơi duy trì hiệu suất cao mà không lo chấn thương.</h4><ul><li>Liên hệ: abc@test.com.vn</li><li>Tel: 0123456789</li></ul><p><br></p><p>​<br></p>",
-  },
-  {
-    id: 241,
-    sku: 'DF-2A-C',
-    categoryName: 'Vợt',
-    brandName: 'Double Fish',
-    attributeValues: ['best_seller'],
-    title: 'Vợt Bóng Bàn Double Fish 2A-C',
-    price: 280000,
-    images: [
-      '/assets/images/products/vot-bong-ban-double-fish-2ac.jpg',
-      '/assets/images/products/vot-bong-ban-double-fish-2ac.jpg',
-    ],
-    ratings: 5,
-    shortDescription:
-      'Vợt bóng bàn chất lượng cao, phù hợp cho cả người mới chơi và người chơi chuyên nghiệp.',
-    description:
-      "<h4 class=''>1. <strong>Thiết kế và chất liệu cao cấp</strong></h4><p class=''>Vợt pickleball được chế tạo từ chất liệu [carbon fiber / composite / gỗ cao cấp], giúp tăng độ bền, giảm trọng lượng và tối ưu lực đánh. Bề mặt vợt có kết cấu đặc biệt giúp kiểm soát bóng tốt hơn, mang đến độ xoáy và độ chính xác cao trong từng cú đánh.</p><h4 class=''>2. <strong>Hiệu suất vượt trội</strong></h4><p class=''>Với trọng lượng lý tưởng [số gram], vợt đảm bảo sự cân bằng hoàn hảo giữa sức mạnh và sự linh hoạt, phù hợp cho cả người chơi mới lẫn vận động viên chuyên nghiệp. Tay cầm được thiết kế công thái học với lớp bọc chống trượt, giúp người chơi duy trì sự thoải mái trong suốt trận đấu.</p><h4 class=''>3. <strong>Ứng dụng và lợi ích</strong></h4><h4>Dòng vợt này phù hợp cho nhiều phong cách chơi, từ tấn công mạnh mẽ đến phòng thủ linh hoạt. Công nghệ giảm chấn giúp giảm rung chấn khi tiếp xúc bóng, bảo vệ cổ tay và khuỷu tay, giúp người chơi duy trì hiệu suất cao mà không lo chấn thương.</h4><ul><li>Liên hệ: abc@test.com.vn</li><li>Tel: 0123456789</li></ul><p><br></p><p>​<br></p>",
-  },
-  {
-    id: 242,
-    sku: 'DF-201C',
-    categoryName: 'Bàn',
-    brandName: 'Double Fish',
-    attributeValues: ['top_rated', 'featured'],
-    title: 'Bàn Bóng Bàn Double Fish DF 201C',
-    price: 8990000,
-    images: [
-      '/assets/images/products/ban-bong-ban-double-fish-201c.jpg',
-      '/assets/images/products/ban-bong-ban-double-fish-201c.jpg',
-    ],
-    ratings: 3,
-    shortDescription:
-      'Bàn bóng bàn chất lượng với thiết kế chắc chắn, phù hợp cho cả luyện tập và thi đấu.',
-    description:
-      "<h4 class=''>1. <strong>Thiết kế và chất liệu cao cấp</strong></h4><p class=''>Vợt pickleball được chế tạo từ chất liệu [carbon fiber / composite / gỗ cao cấp], giúp tăng độ bền, giảm trọng lượng và tối ưu lực đánh. Bề mặt vợt có kết cấu đặc biệt giúp kiểm soát bóng tốt hơn, mang đến độ xoáy và độ chính xác cao trong từng cú đánh.</p><h4 class=''>2. <strong>Hiệu suất vượt trội</strong></h4><p class=''>Với trọng lượng lý tưởng [số gram], vợt đảm bảo sự cân bằng hoàn hảo giữa sức mạnh và sự linh hoạt, phù hợp cho cả người chơi mới lẫn vận động viên chuyên nghiệp. Tay cầm được thiết kế công thái học với lớp bọc chống trượt, giúp người chơi duy trì sự thoải mái trong suốt trận đấu.</p><h4 class=''>3. <strong>Ứng dụng và lợi ích</strong></h4><h4>Dòng vợt này phù hợp cho nhiều phong cách chơi, từ tấn công mạnh mẽ đến phòng thủ linh hoạt. Công nghệ giảm chấn giúp giảm rung chấn khi tiếp xúc bóng, bảo vệ cổ tay và khuỷu tay, giúp người chơi duy trì hiệu suất cao mà không lo chấn thương.</h4><ul><li>Liên hệ: abc@test.com.vn</li><li>Tel: 0123456789</li></ul><p><br></p><p>​<br></p>",
-  },
-  {
-    id: 243,
-    sku: 'DFPK-3101',
-    categoryName: 'Newbie',
-    brandName: 'Double Fish',
-    attributeValues: ['top_rated', 'featured'],
-    title: 'Vợt Pickleball DFPK-3101',
-    price: 1390000,
-    images: [
-      '/assets/images/products/DFPK-3106-min.png',
-      '/assets/images/products/DFPK-3106-min.png',
-    ],
-    ratings: 2,
-    shortDescription:
-      'Vợt pickleball dành cho người mới chơi, thiết kế đơn giản nhưng vẫn đảm bảo hiệu suất tốt.',
     description:
       "<h4 class=''>1. <strong>Thiết kế và chất liệu cao cấp</strong></h4><p class=''>Vợt pickleball được chế tạo từ chất liệu [carbon fiber / composite / gỗ cao cấp], giúp tăng độ bền, giảm trọng lượng và tối ưu lực đánh. Bề mặt vợt có kết cấu đặc biệt giúp kiểm soát bóng tốt hơn, mang đến độ xoáy và độ chính xác cao trong từng cú đánh.</p><h4 class=''>2. <strong>Hiệu suất vượt trội</strong></h4><p class=''>Với trọng lượng lý tưởng [số gram], vợt đảm bảo sự cân bằng hoàn hảo giữa sức mạnh và sự linh hoạt, phù hợp cho cả người chơi mới lẫn vận động viên chuyên nghiệp. Tay cầm được thiết kế công thái học với lớp bọc chống trượt, giúp người chơi duy trì sự thoải mái trong suốt trận đấu.</p><h4 class=''>3. <strong>Ứng dụng và lợi ích</strong></h4><h4>Dòng vợt này phù hợp cho nhiều phong cách chơi, từ tấn công mạnh mẽ đến phòng thủ linh hoạt. Công nghệ giảm chấn giúp giảm rung chấn khi tiếp xúc bóng, bảo vệ cổ tay và khuỷu tay, giúp người chơi duy trì hiệu suất cao mà không lo chấn thương.</h4><ul><li>Liên hệ: abc@test.com.vn</li><li>Tel: 0123456789</li></ul><p><br></p><p>​<br></p>",
   },
