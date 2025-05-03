@@ -19,6 +19,7 @@ async function bootstrap() {
       'http://localhost:4000',
       'https://doublefish.com.vn',
       'https://mofit-dashboard.vercel.app',
+      'https://mofit-dashboard-sondang0612s-projects.vercel.app',
     ],
     credentials: true,
     exposedHeaders: ['Content-Disposition'],
