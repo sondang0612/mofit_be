@@ -39,11 +39,11 @@ export class ProductsService extends TypeOrmBaseService<Product> {
     } = createProductDto;
 
     const imagesData = {
-      cover: images[0] || null,
-      other: images.slice(1),
+      cover: images?.length > 0 ? images[0] : null,
+      other: images?.slice(1),
     };
 
-    await this._create({
+    const product = await this._create({
       brand: { id: brandId },
       category: { id: categoryId },
       price,
@@ -61,6 +61,7 @@ export class ProductsService extends TypeOrmBaseService<Product> {
 
     return {
       message: 'Product created successfully!',
+      data: product,
     };
   }
 
@@ -310,7 +311,7 @@ export class ProductsService extends TypeOrmBaseService<Product> {
     return null;
   }
 
-  async updateOne(args: UpdateProductDto) {
+  async patchOne(args: UpdateProductDto) {
     const {
       id,
       brandId,
@@ -325,23 +326,48 @@ export class ProductsService extends TypeOrmBaseService<Product> {
       title,
     } = args;
 
+    const updateData: any = {};
+
+    if (title !== undefined) {
+      updateData.title = title;
+      updateData.slug = slug(title);
+    }
+    if (description !== undefined) updateData.description = description;
+    if (origin !== undefined) updateData.origin = origin;
+    if (price !== undefined) updateData.price = price;
+    if (shortDescription !== undefined)
+      updateData.shortDescription = shortDescription;
+    if (sku !== undefined) updateData.sku = sku;
+    if (specifications !== undefined)
+      updateData.specifications = specifications;
+    if (images !== undefined) {
+      updateData.images = {
+        cover: images[0] || null,
+        other: images.slice(1),
+      };
+    }
+    if (categoryId !== undefined) {
+      updateData.category = { id: categoryId };
+    }
+    if (brandId !== undefined) {
+      updateData.brand = { id: brandId };
+    }
+
+    await this.repository.update(id, updateData);
+
+    return { message: 'Patch update successful!!' };
+  }
+
+  async updateImages(args: UpdateProductDto) {
+    const { id, images } = args;
+
     const imagesData = {
       cover: images[0] || null,
       other: images.slice(1),
     };
 
     await this.repository.update(id, {
-      title,
-      description,
-      origin,
-      price,
-      shortDescription,
-      sku,
-      specifications,
       images: imagesData as any,
-      slug: slug(title),
-      category: { id: categoryId },
-      brand: { id: brandId },
     });
 
     return { message: 'Update successful!!' };

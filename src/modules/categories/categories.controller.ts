@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -16,6 +17,7 @@ import { Auth, Permissions } from '../auth/guards/global-auth.guard';
 import { CategoriesService } from './categories.service';
 import { CategoriesPaginationDto } from './dto/categories-pagination.dto';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @Controller(EApiPathName.CATEGORIES)
 export class CategoriesController {
@@ -66,5 +68,11 @@ export class CategoriesController {
   @Permissions(ERole.ADMIN)
   deleteOne(@Param('id') id: string) {
     return this.categoriesService.deleteOne(+id);
+  }
+
+  @Patch(':id')
+  @Permissions(ERole.ADMIN)
+  patchOne(@Body() args: UpdateCategoryDto) {
+    return this.categoriesService.patchOne(args);
   }
 }

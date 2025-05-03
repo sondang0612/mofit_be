@@ -6,19 +6,19 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
-  Put,
   Query,
 } from '@nestjs/common';
 import { EApiPathName } from 'src/common/constants/api-path.enum';
 import { EAuth } from 'src/common/constants/auth.enum';
+import { ERole } from 'src/common/constants/role.enum';
+import { ExtractUser, UserParams } from 'src/common/decorators/user.decorator';
 import { Auth, Permissions } from '../auth/guards/global-auth.guard';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductPaginationDto } from './dto/product-pagination.dto';
-import { ProductsService } from './products.service';
-import { ERole } from 'src/common/constants/role.enum';
-import { ExtractUser, UserParams } from 'src/common/decorators/user.decorator';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductsService } from './products.service';
 
 @Controller({ path: EApiPathName.PRODUCTS })
 export class ProductsController {
@@ -61,9 +61,9 @@ export class ProductsController {
     return this.productsService.deleteOne(id, user);
   }
 
-  @Put(':id')
+  @Patch(':id')
   @Permissions(ERole.ADMIN)
   updateOne(@Body() args: UpdateProductDto) {
-    return this.productsService.updateOne(args);
+    return this.productsService.patchOne(args);
   }
 }

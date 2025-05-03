@@ -6,6 +6,7 @@ import { TypeOrmBaseService } from 'src/database/services/typeorm-base.service';
 import { DataSource, Repository } from 'typeorm';
 import { CategoriesPaginationDto } from './dto/categories-pagination.dto';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @Injectable()
 export class CategoriesService extends TypeOrmBaseService<Category> {
@@ -17,13 +18,18 @@ export class CategoriesService extends TypeOrmBaseService<Category> {
     super(categoriesRepository);
   }
 
-  create(createCategoryDto: CreateCategoryDto) {
+  async create(createCategoryDto: CreateCategoryDto) {
     const { imgSrc, name, parentCategoryId } = createCategoryDto;
-    return this._create({
+    const category = await this._create({
       name,
       imgSrc,
       parentCategory: { id: parentCategoryId },
     });
+
+    return {
+      message: 'Create Successfull!!',
+      data: category,
+    };
   }
 
   async findAll() {
@@ -163,5 +169,20 @@ export class CategoriesService extends TypeOrmBaseService<Category> {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async patchOne(args: UpdateCategoryDto) {
+    const { id, name, parentCategoryId, imgSrc } = args;
+
+    const updateData: any = {};
+
+    if (name !== undefined) updateData.name = name;
+    if (parentCategoryId !== undefined)
+      updateData.parentCategory = { id: parentCategoryId };
+    if (imgSrc !== undefined) updateData.imgSrc = imgSrc;
+
+    await this.repository.update(id, updateData);
+
+    return { message: 'Category patch successful!!' };
   }
 }
