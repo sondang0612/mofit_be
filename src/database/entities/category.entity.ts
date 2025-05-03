@@ -8,6 +8,9 @@ export class Category extends BaseEntity {
   @Column({ type: 'varchar', length: 255 })
   name: string;
 
+  @Column({ type: 'varchar', length: 255 })
+  slug: string;
+
   @OneToMany(() => Product, (product) => product.category)
   products: Product[];
 

@@ -1,7 +1,8 @@
 import slugify from 'slugify';
 
 const slug = (text: string) => {
-  return slugify(text, {
+  const replacedText = text.replace(/\//g, '-');
+  return slugify(replacedText, {
     lower: true,
     locale: 'vi',
     remove: /[*+~.()'"!:@]/g,

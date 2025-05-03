@@ -27,16 +27,15 @@ export class MockDataService {
     private readonly discountsService: DiscountsService,
     private readonly brandService: BrandsService,
   ) {}
-  async run() {
+  async run(query: any) {
+    const { env } = query;
     try {
-      await this.importCategories();
+      await this.importCategories(env);
       await this.importBrands();
-      // await this.importDiscounts();
+      //await this.importDiscounts();
       await this.importAttributes();
-      //await this.importProducts();
-      // await this.importProducts();
-      // await this.importProducts();
       await this.importUsersData();
+      await this.importProducts(env);
 
       return {
         message: 'Ok',
@@ -46,11 +45,15 @@ export class MockDataService {
     }
   }
 
-  async importCategories() {
+  async importCategories(env: string) {
     for (const item of categoriesData) {
       const category = await this.categoriesService._create({
         name: item.name,
-        imgSrc: item?.imgSrc,
+        imgSrc:
+          env === 'prod'
+            ? item?.imgSrc?.replace('dev', 'production')
+            : item.imgSrc,
+        slug: item?.slug,
       });
 
       if (item?.subCategories?.length > 0) {
@@ -59,7 +62,7 @@ export class MockDataService {
             return this.categoriesService._create({
               name: subItem.name,
               parentCategory: category,
-              imgSrc: subItem?.imgSrc,
+              slug: subItem?.slug,
             });
           }),
         );
@@ -90,11 +93,9 @@ export class MockDataService {
 
     await this.usersService._createMany(hashedPasswordUsersData as any);
   }
-  async importProducts() {
+  async importProducts(env: string) {
     await Promise.all(
       productsData.map(async (productData) => {
-        let discount = null;
-
         const category = await this.categoriesService._findOne({
           where: { name: productData.categoryName },
         });
@@ -104,11 +105,11 @@ export class MockDataService {
           isDeleted: false,
         });
 
-        if (productData?.discountPercentage) {
-          discount = await this.discountsService._findOne({
-            where: { percentage: productData?.discountPercentage },
-          });
-        }
+        // if (productData?.discountPercentage) {
+        //   discount = await this.discountsService._findOne({
+        //     where: { percentage: productData?.discountPercentage },
+        //   });
+        // }
 
         const brand = await this.brandService._findOne({
           where: { name: productData?.brandName },
@@ -120,7 +121,7 @@ export class MockDataService {
           attributes,
           brand,
           slug: slug(productData.title),
-          ...(discount ? { discount } : {}),
+          images: null,
         });
 
         return createdProduct;

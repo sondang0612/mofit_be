@@ -7,6 +7,7 @@ import { DataSource, Repository } from 'typeorm';
 import { CategoriesPaginationDto } from './dto/categories-pagination.dto';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { slug } from 'src/common/utils/slug';
 
 @Injectable()
 export class CategoriesService extends TypeOrmBaseService<Category> {
@@ -23,6 +24,7 @@ export class CategoriesService extends TypeOrmBaseService<Category> {
     const category = await this._create({
       name,
       imgSrc,
+      slug: slug(name),
       parentCategory: { id: parentCategoryId },
     });
 

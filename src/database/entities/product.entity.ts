@@ -43,17 +43,8 @@ export class Product extends BaseEntity {
   @Column({ type: 'varchar', nullable: true })
   specifications: string;
 
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'jsonb', nullable: true })
   images: Record<string, any>; // cover and normal
-
-  @Column({
-    nullable: true,
-    type: 'decimal',
-    precision: 2,
-    scale: 1,
-    default: 0,
-  })
-  ratings: number;
 
   @ManyToOne(() => Category, (category) => category.products)
   @JoinColumn({ name: 'category_id' })
