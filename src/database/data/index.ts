@@ -33,9 +33,9 @@ export const brandsData = [
   {
     name: 'Double Fish',
   },
-  {
-    name: 'Mofit',
-  },
+  // {
+  //   name: 'Mofit',
+  // },
 ];
 
 export const usersData = [

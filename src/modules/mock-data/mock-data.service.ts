@@ -33,7 +33,7 @@ export class MockDataService {
       await this.importBrands();
       // await this.importDiscounts();
       await this.importAttributes();
-      await this.importProducts();
+      //await this.importProducts();
       // await this.importProducts();
       // await this.importProducts();
       await this.importUsersData();
