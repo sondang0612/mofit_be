@@ -4,7 +4,7 @@ dotenv.config();
 export const categoriesData = [
   {
     name: 'Bóng bàn',
-    imgSrc: `https://doublefish-s3-upload.s3.ap-southeast-1.amazonaws.com/dev/categories/bong-ban/01.png`,
+    imgSrc: `https://doublefish-s3-upload.s3.ap-southeast-1.amazonaws.com/dev/categories/bong-ban/cover.png`,
     slug: 'bong-ban',
     subCategories: [
       { name: 'Bóng', slug: 'bong' },
@@ -16,7 +16,7 @@ export const categoriesData = [
   {
     name: 'Pickleball',
     imgSrc:
-      'https://doublefish-s3-upload.s3.ap-southeast-1.amazonaws.com/dev/categories/pickleball/01.png',
+      'https://doublefish-s3-upload.s3.ap-southeast-1.amazonaws.com/dev/categories/pickleball/cover.png',
     slug: 'pickleball',
     subCategories: [
       {
@@ -37,13 +37,13 @@ export const categoriesData = [
     name: 'Thời trang',
     slug: 'thoi-trang',
     imgSrc:
-      'https://doublefish-s3-upload.s3.ap-southeast-1.amazonaws.com/dev/categories/thoi-trang/01.png',
+      'https://doublefish-s3-upload.s3.ap-southeast-1.amazonaws.com/dev/categories/thoi-trang/cover.png',
   },
   {
     name: 'Phụ kiện thể thao',
     slug: 'phu-kien-the-thao',
     imgSrc:
-      'https://doublefish-s3-upload.s3.ap-southeast-1.amazonaws.com/dev/categories/phu-kien-the-thao/01.png',
+      'https://doublefish-s3-upload.s3.ap-southeast-1.amazonaws.com/dev/categories/phu-kien-the-thao/cover.png',
   },
 ];
 
