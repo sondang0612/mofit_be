@@ -154,8 +154,13 @@ export class PaymentsService extends TypeOrmBaseService<Payment> {
         return VNPAY_RESPONSE.ORDER_NOT_FOUND;
       }
 
-      if (order.totalPrice !== Number(vnp_Amount) / 100 || !vnp_Amount) {
-        console.log(`Invalid amount ${order.totalPrice} !== ${vnp_Amount}`);
+      if (order.totalPrice != Number(vnp_Amount) / 100 || !vnp_Amount) {
+        console.log({
+          msg: `Invalid amount ${order.totalPrice} !== ${vnp_Amount}`,
+          totalPrice: order.totalPrice,
+          vnp_Amount: Number(vnp_Amount) / 100,
+          result: order.totalPrice != Number(vnp_Amount),
+        });
 
         return VNPAY_RESPONSE.INVALID_AMOUNT;
       }
