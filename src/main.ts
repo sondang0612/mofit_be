@@ -27,12 +27,12 @@ async function bootstrap() {
 
   // limit request api
   // 1000 request for the same ip each 1 hours
-  // const limiter = rateLimit({
-  //   max: 1000,
-  //   windowMs: 60 * 60 * 1000,
-  //   message: 'Too many requests from this IP, please try again in an hour',
-  // });
-  //app.use('/api', limiter);
+  const limiter = rateLimit({
+    max: 1000,
+    windowMs: 60 * 60 * 1000,
+    message: 'Too many requests from this IP, please try again in an hour',
+  });
+  app.use('/api', limiter);
 
   app.use(express.json({ limit: '10kb' }));
 
