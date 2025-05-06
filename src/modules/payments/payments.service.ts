@@ -151,6 +151,12 @@ export class PaymentsService extends TypeOrmBaseService<Payment> {
         relations: ['user', 'orderItems'],
       });
 
+      if (order.totalPrice !== Number(vnp_Amount) || !vnp_Amount) {
+        console.log(`Invalid amount ${order.totalPrice} !== ${vnp_Amount}`);
+
+        return VNPAY_RESPONSE.INVALID_AMOUNT;
+      }
+
       if (!order) {
         console.warn(`Order not found with Ref: ${vnp_TxnRef}`);
         return VNPAY_RESPONSE.ORDER_NOT_FOUND;
