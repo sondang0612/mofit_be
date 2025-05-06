@@ -150,8 +150,7 @@ export class PaymentsService extends TypeOrmBaseService<Payment> {
         where: { txnRef: vnp_TxnRef, isDeleted: false },
         relations: ['user', 'orderItems'],
       });
-
-      if (order.totalPrice !== Number(vnp_Amount) || !vnp_Amount) {
+      if (order.totalPrice !== Number(vnp_Amount) / 100 || !vnp_Amount) {
         console.log(`Invalid amount ${order.totalPrice} !== ${vnp_Amount}`);
 
         return VNPAY_RESPONSE.INVALID_AMOUNT;
