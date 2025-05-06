@@ -131,7 +131,6 @@ export class PaymentsService extends TypeOrmBaseService<Payment> {
       vnp_BankTranNo,
       vnp_Amount,
     } = vnpayIpnDto;
-
     const isValidChecksum = this.validateVnpayChecksum(vnpayIpnDto);
     if (!isValidChecksum) {
       return VNPAY_RESPONSE.INVALID_CHECKSUM;
@@ -150,15 +149,15 @@ export class PaymentsService extends TypeOrmBaseService<Payment> {
         where: { txnRef: vnp_TxnRef, isDeleted: false },
         relations: ['user', 'orderItems'],
       });
+      if (!order) {
+        console.warn(`Order not found with Ref: ${vnp_TxnRef}`);
+        return VNPAY_RESPONSE.ORDER_NOT_FOUND;
+      }
+
       if (order.totalPrice !== Number(vnp_Amount) / 100 || !vnp_Amount) {
         console.log(`Invalid amount ${order.totalPrice} !== ${vnp_Amount}`);
 
         return VNPAY_RESPONSE.INVALID_AMOUNT;
-      }
-
-      if (!order) {
-        console.warn(`Order not found with Ref: ${vnp_TxnRef}`);
-        return VNPAY_RESPONSE.ORDER_NOT_FOUND;
       }
 
       if (order.status !== EOrderStatus.DRAFT) {
@@ -188,12 +187,6 @@ export class PaymentsService extends TypeOrmBaseService<Payment> {
         vnp_ResponseCode === EVnpayResponseCode.SUCCESS &&
         vnp_TransactionNo !== EVnpayTransactionNo.FAIL
       ) {
-        const vnpAmount = parseInt(vnp_Amount) / 100;
-        if (Number(payment.totalPrice) !== vnpAmount) {
-          await queryRunner.rollbackTransaction();
-          return VNPAY_RESPONSE.INVALID_AMOUNT;
-        }
-
         await queryRunner.manager.update(
           ETableName.CART_ITEM,
           {
@@ -216,7 +209,7 @@ export class PaymentsService extends TypeOrmBaseService<Payment> {
           bankTransactionNo: vnp_BankTranNo,
           transactionStatus: vnp_TransactionStatus,
           responseCode: vnp_ResponseCode,
-          paymentAmount: vnpAmount,
+          paymentAmount: Number(vnp_Amount) / 100,
         };
       } else {
         payment.status = EPaymentStatus.FAILED;
