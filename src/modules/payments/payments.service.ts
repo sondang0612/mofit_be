@@ -92,10 +92,11 @@ export class PaymentsService extends TypeOrmBaseService<Payment> {
       let vnp_Params: Record<string, any> = {
         vnp_Version: version,
         vnp_Command: 'pay',
-        vnp_TmnCode: tmnCode,
+        //vnp_TmnCode: tmnCode,
+        vnp_TmnCode: '123',
         vnp_Locale: 'vn',
         vnp_CurrCode: 'VND',
-        vnp_TxnRef: '1',
+        vnp_TxnRef: txnRef,
         vnp_OrderInfo: orderInfo,
         vnp_OrderType: 'other',
         vnp_Amount: totalPrice * 100,
