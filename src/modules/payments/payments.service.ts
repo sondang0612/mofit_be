@@ -96,12 +96,14 @@ export class PaymentsService extends TypeOrmBaseService<Payment> {
         vnp_Locale: 'vn',
         vnp_CurrCode: 'VND',
         vnp_TxnRef: txnRef,
-        vnp_OrderInfo: orderInfo,
+        //vnp_OrderInfo: orderInfo,
+        vnp_OrderInfo:
+          'Chào ngày mới 123@#%$^%&^* Thanh toán đơn hàng số 12345 – khách hàng: Nguyễn Văn A!',
         vnp_OrderType: 'other',
         vnp_Amount: totalPrice * 100,
         vnp_ReturnUrl: returnUrl,
         vnp_IpAddr: ipAddress,
-        vnp_CreateDate: dayjs().subtract(7, 'hours').format('YYYYMMDDHHmmss'),
+        vnp_CreateDate: dayjs().format('YYYYMMDDHHmmss'),
       };
 
       vnp_Params = sortObject(vnp_Params) as any;
