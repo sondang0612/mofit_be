@@ -101,7 +101,7 @@ export class PaymentsService extends TypeOrmBaseService<Payment> {
         vnp_Amount: totalPrice * 100,
         vnp_ReturnUrl: returnUrl,
         vnp_IpAddr: ipAddress,
-        vnp_CreateDate: dayjs().format('YYYYMMDDHHmmss'),
+        vnp_CreateDate: dayjs().format('YYYYMMDDHHmmss1'),
       };
 
       vnp_Params = sortObject(vnp_Params) as any;
