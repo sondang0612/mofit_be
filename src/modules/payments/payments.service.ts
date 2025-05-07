@@ -92,16 +92,16 @@ export class PaymentsService extends TypeOrmBaseService<Payment> {
       let vnp_Params: Record<string, any> = {
         vnp_Version: version,
         vnp_Command: 'pay',
-        vnp_TmnCode: tmnCode,
+        //vnp_TmnCode: tmnCode,
         vnp_Locale: 'vn',
         vnp_CurrCode: 'VND',
         vnp_TxnRef: txnRef,
         vnp_OrderInfo: orderInfo,
         vnp_OrderType: 'other',
         vnp_Amount: totalPrice * 100,
-        vnp_ReturnUrl: returnUrl,
+        //vnp_ReturnUrl: returnUrl,
         vnp_IpAddr: ipAddress,
-        vnp_CreateDate: dayjs().format('YYYYMMDDHHmmss1'),
+        vnp_CreateDate: dayjs().format('YYYYMMDDHHmmss'),
       };
 
       vnp_Params = sortObject(vnp_Params) as any;
